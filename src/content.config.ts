@@ -15,6 +15,14 @@ const posts = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string().min(10).max(80),
+      /**
+       * Optional shorter title used only for the `<title>` tag, social cards
+       * and structured data. Falls back to `title` when omitted. Use this when
+       * a faithful YouTube-style title would push the SERP rendering past the
+       * 580 px budget — the visible H1 keeps `title` so the page still matches
+       * what readers see on YouTube.
+       */
+      seoTitle: z.string().min(10).max(65).optional(),
       description: z.string().min(50).max(170),
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),

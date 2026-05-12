@@ -47,7 +47,11 @@ const latestVideos = videos
   .filter((v) => !shownVideoIds.has(v.id))
   .slice(0, 3);
 
-const homepageTitle = 'Engineering tutorials, system design & AI for engineers';
+// Kept under ~42 chars so the rendered `${title} — ${SITE_TITLE}` stays
+// inside the 580 px SERP title budget (≈ 64 mixed-case chars at Google's
+// title font). Long enough to mention all three content pillars; short
+// enough that the brand suffix doesn't get truncated.
+const homepageTitle = 'Engineering tutorials, system design & AI';
 ---
 <BaseLayout title={homepageTitle} description={SITE_DESCRIPTION} path="/">
   <section class="hero-bg relative -mx-4 -mt-8 overflow-hidden px-4 pb-10 pt-12 sm:-mx-6 sm:-mt-12 sm:px-6 sm:pb-16 sm:pt-20">

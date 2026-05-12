@@ -59,10 +59,48 @@ export function absoluteUrl(pathOrUrl: string): string {
   return `${base}${path.replace(/\/$/u, '')}`;
 }
 
+/**
+ * Approximate pixel width of a title rendered in Google's SERP title font
+ * (Arial 18 px). Numbers are tuned from public measurements; precise enough
+ * to keep us inside the 580 px budget without shipping a real font metric.
+ */
+const TITLE_GLYPH_PX: Readonly<Record<string, number>> = {
+  i: 5, l: 5, I: 6, j: 5, t: 6, f: 6, r: 6, '.': 5, ',': 5, ' ': 5,
+  a: 9, b: 9, c: 8, d: 9, e: 9, g: 9, h: 9, k: 9, n: 9, o: 9, p: 9, q: 9,
+  s: 8, u: 9, v: 8, x: 8, y: 8, z: 8,
+  m: 14, w: 12, M: 14, W: 14,
+  A: 12, B: 11, C: 12, D: 12, E: 11, F: 10, G: 12, H: 12, J: 8, K: 12,
+  L: 10, N: 12, O: 13, P: 11, Q: 13, R: 12, S: 11, T: 11, U: 12, V: 12,
+  X: 12, Y: 12, Z: 11,
+  '&': 11, '-': 6, '—': 16, '–': 12, ':': 5, ';': 5, '/': 5, '|': 5,
+  '(': 6, ')': 6, '!': 5, '?': 9, "'": 4, '"': 7, '#': 9,
+};
+const TITLE_DEFAULT_PX = 9; // ~mid-width fallback for any glyph not in the table
+
+function titlePixelWidth(s: string): number {
+  let total = 0;
+  for (const c of s) total += TITLE_GLYPH_PX[c] ?? TITLE_DEFAULT_PX;
+  return total;
+}
+
+const TITLE_PIXEL_BUDGET = 580;
+const TITLE_SUFFIX = ` — ${SITE_TITLE}`;
+const TITLE_SUFFIX_PX = titlePixelWidth(TITLE_SUFFIX);
+
 export function resolveSeo(input: SeoInput): ResolvedSeo {
   const title = input.title.trim();
-  const fullTitle =
-    title === SITE_TITLE ? SITE_TITLE : `${title} — ${SITE_TITLE}`;
+  // The brand suffix gets dropped on pages whose own title is already wide
+  // enough that ` — ${SITE_TITLE}` would push the whole thing past Google's
+  // ~580 px SERP cutoff. Keeping page-specific keywords visible matters more
+  // than repeating the brand the user already saw in the URL bar.
+  let fullTitle: string;
+  if (title === SITE_TITLE) {
+    fullTitle = SITE_TITLE;
+  } else if (titlePixelWidth(title) + TITLE_SUFFIX_PX <= TITLE_PIXEL_BUDGET) {
+    fullTitle = `${title}${TITLE_SUFFIX}`;
+  } else {
+    fullTitle = title;
+  }
   return {
     title,
     fullTitle,
