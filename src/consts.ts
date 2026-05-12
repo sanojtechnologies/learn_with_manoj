@@ -9,9 +9,11 @@ export const SITE_TAGLINE = 'Never stop Learning.';
 /**
  * Default <meta name="description">. Kept under ~145 chars (~960 px in most
  * SERP fonts) so search engines and SEO checkers don't truncate or warn.
+ * Leads with the same three primary keywords as the homepage <title> so the
+ * SERP card reinforces them twice in the same snippet.
  */
 export const SITE_DESCRIPTION =
-  'Engineering tutorials, system design, design patterns and AI for engineers — the written companion to the LearnwithManoj YouTube channel.';
+  'System design, design patterns and AI for engineers — written deep-dives and companion videos from the LearnwithManoj YouTube channel.';
 export const SITE_LANG = 'en';
 export const SITE_LOCALE = 'en_US';
 

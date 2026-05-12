@@ -47,11 +47,13 @@ const latestVideos = videos
   .filter((v) => !shownVideoIds.has(v.id))
   .slice(0, 3);
 
-// Kept under ~42 chars so the rendered `${title} — ${SITE_TITLE}` stays
-// inside the 580 px SERP title budget (≈ 64 mixed-case chars at Google's
-// title font). Long enough to mention all three content pillars; short
-// enough that the brand suffix doesn't get truncated.
-const homepageTitle = 'Engineering tutorials, system design & AI';
+// Front-loaded with the three primary keywords readers actually search for
+// (system design, design patterns, AI). "for engineers" qualifies audience
+// and depth — without it the keywords are too broad and pull in unqualified
+// traffic. `resolveSeo()` appends ` — ${SITE_TITLE}`; final rendered title
+// is 526 px / 580 px Google SERP budget.
+const homepageTitle =
+  'System design, design patterns & AI for engineers';
 ---
 <BaseLayout title={homepageTitle} description={SITE_DESCRIPTION} path="/">
   <section class="hero-bg relative -mx-4 -mt-8 overflow-hidden px-4 pb-10 pt-12 sm:-mx-6 sm:-mt-12 sm:px-6 sm:pb-16 sm:pt-20">
