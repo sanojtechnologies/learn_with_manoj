@@ -1,0 +1,80 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Monaco,
+    Consolas, monospace;
+
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-900: #1e3a8a;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  @apply bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+}
+
+/* Subtle radial accent behind the hero on the homepage. */
+.hero-bg {
+  background:
+    radial-gradient(900px 480px at 0% -10%, rgb(37 99 235 / 0.12), transparent 60%),
+    radial-gradient(720px 360px at 100% 0%, rgb(220 38 38 / 0.10), transparent 60%);
+}
+.dark .hero-bg,
+@media (prefers-color-scheme: dark) {
+  .hero-bg {
+    background:
+      radial-gradient(900px 480px at 0% -10%, rgb(37 99 235 / 0.22), transparent 60%),
+      radial-gradient(720px 360px at 100% 0%, rgb(239 68 68 / 0.16), transparent 60%);
+  }
+}
+
+/* Shiki light/dark dual-theme switching via prefers-color-scheme. */
+@media (prefers-color-scheme: dark) {
+  .astro-code,
+  .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}
+
+/* Typography polish for the prose-rendered markdown content. */
+.prose :where(a):not(:where([class~="not-prose"] *)) {
+  @apply text-brand-600 underline-offset-4 hover:underline dark:text-brand-400;
+}
+
+.prose pre {
+  @apply rounded-lg border border-slate-200 dark:border-slate-800;
+}
+
+.prose :where(code):not(:where([class~="not-prose"] *)) {
+  @apply rounded bg-slate-100 px-1 py-0.5 text-[0.9em] font-medium text-slate-800
+         dark:bg-slate-800 dark:text-slate-100;
+}
+
+.prose :where(pre code) {
+  @apply bg-transparent px-0 py-0 text-[0.95em] text-inherit dark:bg-transparent dark:text-inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose {
+    @apply prose-invert;
+  }
+}

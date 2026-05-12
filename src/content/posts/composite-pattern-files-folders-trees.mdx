@@ -1,0 +1,40 @@
+---
+title: "Composite Pattern Explained: Files, Folders, and Trees"
+description: "Show notes for the Composite Pattern video — when to use it, real-world examples (file systems, the DOM, React trees), and a code-free mental model."
+pubDate: 2026-05-11
+tags:
+  - design-patterns
+  - structural-patterns
+  - oop
+  - software-engineering
+youtubeId: jOBDSLzi3S4
+---
+
+The **Composite Pattern** is the secret behind file systems, the browser DOM, React component trees, and every UI framework you've ever used. It lets you treat a single object and a group of objects through the *exact same interface* — call `delete`, `getSize`, or `render` on any node and it just works, leaf or branch.
+
+## What's in the video (6m 41s)
+
+- **0:00** — The Composite Design Pattern
+- **0:41** — Real-world example: corporate analogy
+- **2:41** — What is the Composite Pattern?
+- **3:33** — How the Composite Pattern works
+- **4:43** — When to use the Composite Pattern
+- **5:51** — Final takeaway
+
+## Key takeaways
+
+- **One interface for one *or* many.** Leaves (individual objects) and composites (groups of objects) implement the same interface, so callers stop branching on "is this one thing or a tree of things?"
+- **The "folder" trick.** A folder's `getSize()` is just the sum of its children's `getSize()` — and a file's `getSize()` is its own size. Recursion handles every depth for free.
+- **Use it when your data is naturally hierarchical.** File systems, org charts, UI trees, menus. The pattern is a clean fit only when a tree actually models the domain.
+- **Skip it when it isn't.** Two-level "trees" are just lists. If every node type needs wildly different behavior, a shared interface becomes a leaky abstraction.
+- **You've already used it.** Every `appendChild` in the DOM, every nested React component, every directory listing — Composite under the hood.
+
+## Resources
+
+- Full **Design Patterns** series (25 videos): [YouTube playlist](https://www.youtube.com/playlist?list=PL55symSEWBbPUR_p8ID98itC2e37f6zw8)
+- Previous episode: [Bridge Pattern Explained](https://youtu.be/7QpjCLsWRKY)
+- Next episode: [Decorator Pattern](https://youtu.be/2zRyESykOk4)
+- Source notes on GitHub: [learnwithmanoj/design-patterns-simplified](https://github.com/learnwithmanoj/design-patterns-simplified/blob/main/11-structural-composite.md)
+- Based on: *Design Patterns* (Gang of Four), *Head First Design Patterns* (Freeman & Robson), and [design-patterns-for-humans](https://github.com/kamranahmedse/design-patterns-for-humans).
+
+Browse more posts in [#design-patterns](/tags/design-patterns) or jump to the [Videos page](/videos) for everything else from the channel.

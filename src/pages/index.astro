@@ -1,0 +1,76 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import VideoCard from '@/components/VideoCard.astro';
+import SubscribeCTA from '@/components/SubscribeCTA.astro';
+import {
+  SITE_DESCRIPTION,
+  SITE_TAGLINE,
+  SITE_TITLE,
+  YT_CHANNEL_ID,
+  YT_HANDLE,
+} from '@/consts';
+import { getPublishedPosts } from '@/lib/posts';
+import { fetchLatestVideos } from '@/lib/youtube';
+
+const [posts, videos] = await Promise.all([
+  getPublishedPosts(),
+  fetchLatestVideos(YT_CHANNEL_ID),
+]);
+const latestPosts = posts.slice(0, 3);
+const latestVideos = videos.slice(0, 3);
+---
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION} path="/">
+  <section class="hero-bg relative -mx-4 -mt-8 overflow-hidden px-4 pb-10 pt-12 sm:-mx-6 sm:-mt-12 sm:px-6 sm:pb-16 sm:pt-20">
+    <div class="mx-auto max-w-3xl">
+      <p class="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-700 dark:border-brand-900 dark:bg-brand-900/30 dark:text-brand-400">
+        <span class="inline-block h-1.5 w-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+        {SITE_TAGLINE}
+      </p>
+      <h1 class="mt-5 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl md:text-6xl dark:text-white">
+        Practical software engineering,
+        <span class="bg-gradient-to-r from-brand-600 to-red-600 bg-clip-text text-transparent">written and on video.</span>
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+        {SITE_DESCRIPTION}
+      </p>
+      <div class="mt-7 flex flex-wrap gap-3">
+        <a href="/blog" class="inline-flex items-center rounded-md bg-brand-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-700">
+          Read the blog
+        </a>
+        <a href="/videos" class="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-red-600">
+            <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
+          </svg>
+          Watch on YouTube ({YT_HANDLE})
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {latestPosts.length > 0 && (
+    <section class="mt-14" aria-labelledby="latest-posts-heading">
+      <div class="flex items-baseline justify-between">
+        <h2 id="latest-posts-heading" class="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Latest posts</h2>
+        <a href="/blog" class="text-sm font-medium text-brand-600 hover:underline dark:text-brand-400">All posts &rarr;</a>
+      </div>
+      <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {latestPosts.map((post) => <PostCard post={post} headingLevel={3} />)}
+      </div>
+    </section>
+  )}
+
+  {latestVideos.length > 0 && (
+    <section class="mt-14" aria-labelledby="latest-videos-heading">
+      <div class="flex items-baseline justify-between">
+        <h2 id="latest-videos-heading" class="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Latest videos</h2>
+        <a href="/videos" class="text-sm font-medium text-brand-600 hover:underline dark:text-brand-400">All videos &rarr;</a>
+      </div>
+      <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {latestVideos.map((video) => <VideoCard video={video} headingLevel={3} />)}
+      </div>
+    </section>
+  )}
+
+  <SubscribeCTA />
+</BaseLayout>

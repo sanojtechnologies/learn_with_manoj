@@ -1,0 +1,67 @@
+---
+import {
+  GOOGLE_SITE_VERIFICATION,
+  SITE_LOCALE,
+  SITE_TITLE,
+  SITE_URL,
+} from '@/consts';
+import { resolveSeo, type SeoInput } from '@/lib/seo';
+import '@/styles/global.css';
+
+type Props = SeoInput;
+
+const seo = resolveSeo({
+  ...Astro.props,
+  path: Astro.props.path ?? Astro.url.pathname,
+});
+const rssHref = new URL('/rss.xml', SITE_URL).toString();
+const sitemapHref = new URL('/sitemap-index.xml', SITE_URL).toString();
+---
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+
+<title>{seo.fullTitle}</title>
+<meta name="description" content={seo.description} />
+<link rel="canonical" href={seo.canonical} />
+
+{seo.noindex && <meta name="robots" content="noindex,nofollow" />}
+{!seo.noindex && <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />}
+
+<meta name="generator" content={Astro.generator} />
+<meta name="theme-color" content="#1d4ed8" />
+
+<!-- Open Graph -->
+<meta property="og:type" content={seo.ogType} />
+<meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:title" content={seo.title} />
+<meta property="og:description" content={seo.description} />
+<meta property="og:url" content={seo.canonical} />
+<meta property="og:locale" content={SITE_LOCALE} />
+<meta property="og:image" content={seo.image} />
+<meta property="og:image:alt" content={seo.imageAlt} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+{seo.publishedAt && <meta property="article:published_time" content={seo.publishedAt} />}
+{seo.updatedAt && <meta property="article:modified_time" content={seo.updatedAt} />}
+{seo.tags.map((tag) => <meta property="article:tag" content={tag} />)}
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={seo.title} />
+<meta name="twitter:description" content={seo.description} />
+<meta name="twitter:image" content={seo.image} />
+<meta name="twitter:image:alt" content={seo.imageAlt} />
+
+<!-- Feeds & icons -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="alternate" type="application/rss+xml" title={`${SITE_TITLE} blog feed`} href={rssHref} />
+<link rel="sitemap" type="application/xml" title="Sitemap" href={sitemapHref} />
+
+<!-- Performance hints for YouTube embeds and thumbnails -->
+<link rel="dns-prefetch" href="https://www.youtube-nocookie.com" />
+<link rel="preconnect" href="https://i.ytimg.com" crossorigin />
+
+{GOOGLE_SITE_VERIFICATION && (
+  <meta name="google-site-verification" content={GOOGLE_SITE_VERIFICATION} />
+)}

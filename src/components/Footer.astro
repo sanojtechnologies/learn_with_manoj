@@ -1,0 +1,16 @@
+---
+import { SITE_TITLE, YT_CHANNEL_URL } from '@/consts';
+const year = new Date().getFullYear();
+---
+<footer class="mt-16 border-t border-slate-200/70 bg-slate-50/60 dark:border-slate-800/70 dark:bg-slate-900/40">
+  <div class="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-8 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between sm:px-6 dark:text-slate-400">
+    <p>&copy; {year} {SITE_TITLE}. All rights reserved.</p>
+    <div class="flex flex-wrap items-center gap-4">
+      <a href="/rss.xml" class="hover:text-slate-900 dark:hover:text-white">RSS</a>
+      <a href="/sitemap-index.xml" class="hover:text-slate-900 dark:hover:text-white">Sitemap</a>
+      <a href={YT_CHANNEL_URL} target="_blank" rel="noopener" class="hover:text-slate-900 dark:hover:text-white">YouTube</a>
+      <span class="hidden sm:inline" aria-hidden="true">·</span>
+      <span>Built with Astro.</span>
+    </div>
+  </div>
+</footer>

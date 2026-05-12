@@ -1,0 +1,41 @@
+# build output
+dist/
+.output/
+
+# Astro
+.astro/
+
+# deps
+node_modules/
+
+# logs / debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# env (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# host CLI scratch
+.vercel/
+.netlify/
+.wrangler/
+
+# misc logs / coverage / caches
+*.log
+coverage/
+.cache/
+
+# generated channel inventory (regenerate with `node scripts/list-channel-videos.mjs UC...`)
+scripts/channel-videos.tsv
+
+# editor / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db

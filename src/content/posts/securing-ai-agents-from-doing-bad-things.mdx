@@ -1,0 +1,48 @@
+---
+title: "Securing AI Agents from Doing Bad Things"
+description: "Show notes for AI Explained Part 31 — sandboxing, permission scoping, instruction hierarchy, and the metrics that tell you whether your agent is safe to ship."
+pubDate: 2026-05-08
+tags:
+  - ai
+  - ai-agents
+  - security
+  - llm
+  - ai-explained
+youtubeId: _nTBDJ0HLVk
+---
+
+Autonomous AI agents that can browse, call APIs, and execute code are powerful — and a brand-new attack surface. Episode 31 of the **AI Explained** series breaks the security problem down into three moves: **lock the agent's actions, scope its permissions, and measure its behavior in production.** Below are the chapters, the core ideas, and the metrics worth tracking.
+
+## What's in the video (8m 33s)
+
+- **0:00** — Introduction: securing AI agents
+- **0:32** — Chapter 1: the concept — the shift in AI
+- **1:33** — The agentic attack surface
+- **2:07** — Chapter 2: the example — building the defence
+- **2:12** — What is action sandboxing?
+- **2:35** — Action sandboxing lifecycle
+- **3:02** — What is permission scoping in AI agents?
+- **3:33** — How model-in-middle works
+- **4:05** — What is instruction hierarchy?
+- **4:32** — Chapter 3: the takeaway — measuring success
+- **5:09** — What are trajectory benchmarks?
+- **5:39** — TSR, ASR, and unit cost per task
+- **6:05** — What is *meandering* in AI?
+- **6:35** — What is a step budget?
+- **6:57** — LLM-as-judge & shadow execution
+- **7:25** — How to evaluate AI agents on the live web
+
+## Key takeaways
+
+- **The attack surface moved.** Agents don't just *answer* — they *act*. Anywhere they can call a tool is a place an attacker can try to coerce them.
+- **Action sandboxing.** Every tool call runs in a restricted environment with a clear lifecycle: request → policy check → execution → audit log. No ambient authority.
+- **Permission scoping + model-in-middle.** Give the agent the smallest permission set that gets the job done, and put a second model in front to filter actions before they execute.
+- **Instruction hierarchy.** System prompt > developer prompt > user prompt > tool output. Tool outputs are *data*, not instructions — never let them rewrite the agent's mission.
+- **Measure what matters.** Track **Task Success Rate (TSR)**, **Action Success Rate (ASR)**, and **unit cost per task**. Watch for *meandering* (drift off-task), enforce a **step budget**, and use **LLM-as-judge** plus **shadow execution** to evaluate safely on real traffic.
+
+## Resources
+
+- Full **AI Explained** series: [YouTube playlist](https://www.youtube.com/playlist?list=PL55symSEWBbMoaLBdqZ2vrifOnPKuN_yH)
+- Previous episode: [Finally Understand AI Errors & Human-in-the-Loop (Part 30)](https://youtu.be/ylfK8OaiS18)
+
+More AI-engineering deep-dives in [#ai](/tags/ai) and [#ai-agents](/tags/ai-agents), or hop over to the [Videos page](/videos) for everything else from the channel.

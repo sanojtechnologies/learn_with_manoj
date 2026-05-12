@@ -1,0 +1,47 @@
+---
+import type { YouTubeVideo } from '@/lib/youtube';
+import { formatDate } from '@/lib/posts';
+
+interface Props {
+  video: YouTubeVideo;
+  headingLevel?: 2 | 3;
+}
+
+const { video, headingLevel = 3 } = Astro.props;
+const HeadingTag = `h${headingLevel}` as 'h2' | 'h3';
+---
+<article class="group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-500">
+  <a href={video.url} target="_blank" rel="noopener" class="relative block aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800">
+    <img
+      src={video.thumbnail}
+      alt={`Thumbnail for ${video.title}`}
+      loading="lazy"
+      decoding="async"
+      width="480"
+      height="360"
+      class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+    />
+    <span class="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+      <span class="flex h-12 w-12 items-center justify-center rounded-full bg-red-600/95 text-white shadow-lg">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </span>
+    </span>
+  </a>
+  <div class="flex flex-1 flex-col gap-2 p-4">
+    <HeadingTag class="text-base font-semibold leading-snug tracking-tight text-slate-900 group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-400">
+      <a href={video.url} target="_blank" rel="noopener" class="after:absolute after:inset-0">
+        {video.title}
+      </a>
+    </HeadingTag>
+    {video.publishedAt && (
+      <time
+        datetime={video.publishedAt.toISOString()}
+        class="text-xs text-slate-500 dark:text-slate-400"
+      >
+        {formatDate(video.publishedAt)}
+      </time>
+    )}
+  </div>
+</article>

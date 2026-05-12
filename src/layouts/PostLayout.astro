@@ -1,0 +1,125 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SubscribeCTA from '@/components/SubscribeCTA.astro';
+import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
+import PostCard from '@/components/PostCard.astro';
+import {
+  blogPostingJsonLd,
+  breadcrumbJsonLd,
+  videoObjectJsonLd,
+  absoluteUrl,
+} from '@/lib/seo';
+import { formatDate, readingTime, tagUrl, type Post } from '@/lib/posts';
+
+interface Props {
+  post: Post;
+  related: Post[];
+  body?: string;
+}
+
+const { post, related, body } = Astro.props;
+const { data, id } = post;
+const path = `/blog/${id}`;
+const url = absoluteUrl(path);
+const heroPath = data.heroImage?.src ?? '/og-default.png';
+const heroAlt = data.heroAlt ?? data.title;
+const minutes = readingTime(body);
+
+const jsonLd = [
+  blogPostingJsonLd({
+    title: data.title,
+    description: data.description,
+    url,
+    image: absoluteUrl(heroPath),
+    publishedAt: data.pubDate.toISOString(),
+    updatedAt: data.updatedDate?.toISOString(),
+    tags: data.tags,
+  }),
+  breadcrumbJsonLd([
+    { name: 'Home', url: '/' },
+    { name: 'Blog', url: '/blog' },
+    { name: data.title, url: path },
+  ]),
+  data.youtubeId
+    ? videoObjectJsonLd({
+        videoId: data.youtubeId,
+        name: data.title,
+        description: data.description,
+        uploadDate: data.pubDate.toISOString(),
+      })
+    : null,
+];
+---
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  path={path}
+  image={heroPath}
+  imageAlt={heroAlt}
+  ogType="article"
+  publishedAt={data.pubDate}
+  updatedAt={data.updatedDate}
+  tags={data.tags}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-3xl">
+    <nav aria-label="Breadcrumb" class="mb-6 text-xs text-slate-500 dark:text-slate-400">
+      <ol class="flex flex-wrap items-center gap-1">
+        <li><a href="/" class="hover:underline">Home</a></li>
+        <li aria-hidden="true">/</li>
+        <li><a href="/blog" class="hover:underline">Blog</a></li>
+        <li aria-hidden="true">/</li>
+        <li class="text-slate-700 dark:text-slate-300" aria-current="page">{data.title}</li>
+      </ol>
+    </nav>
+
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">{data.title}</h1>
+      <p class="mt-3 text-lg text-slate-600 dark:text-slate-300">{data.description}</p>
+      <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500 dark:text-slate-400">
+        <time datetime={data.pubDate.toISOString()}>{formatDate(data.pubDate)}</time>
+        {data.updatedDate && (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>Updated <time datetime={data.updatedDate.toISOString()}>{formatDate(data.updatedDate)}</time></span>
+          </>
+        )}
+        <span aria-hidden="true">·</span>
+        <span>{minutes} min read</span>
+      </div>
+      {data.tags.length > 0 && (
+        <ul class="mt-4 flex flex-wrap gap-2">
+          {data.tags.map((tag) => (
+            <li>
+              <a href={tagUrl(tag)} class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
+                #{tag}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </header>
+
+    {data.youtubeId && (
+      <>
+        <YouTubeEmbed id={data.youtubeId} title={data.title} />
+        <SubscribeCTA variant="inline" />
+      </>
+    )}
+
+    <div class="prose prose-slate max-w-none">
+      <slot />
+    </div>
+
+    <SubscribeCTA />
+
+    {related.length > 0 && (
+      <section class="mt-12 border-t border-slate-200 pt-8 dark:border-slate-800">
+        <h2 class="text-xl font-semibold tracking-tight">Related posts</h2>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          {related.map((rel) => <PostCard post={rel} headingLevel={3} />)}
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>

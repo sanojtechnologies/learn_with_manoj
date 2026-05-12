@@ -1,0 +1,48 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import { SITE_TITLE } from '@/consts';
+import { getPublishedPosts, summarizeTags } from '@/lib/posts';
+import { breadcrumbJsonLd } from '@/lib/seo';
+
+const posts = await getPublishedPosts();
+const tags = summarizeTags(posts).slice(0, 12);
+const title = 'Engineering blog';
+const description = `All written deep-dives from ${SITE_TITLE} — system design, code-first tutorials, and engineering walkthroughs.`;
+const jsonLd = [
+  breadcrumbJsonLd([
+    { name: 'Home', url: '/' },
+    { name: 'Blog', url: '/blog' },
+  ]),
+];
+---
+<BaseLayout title={title} description={description} path="/blog" jsonLd={jsonLd}>
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">Engineering blog</h1>
+    <p class="mt-3 max-w-2xl text-lg text-slate-600 dark:text-slate-300">
+      Written deep-dives and companion notes to the LearnwithManoj YouTube channel.
+    </p>
+  </header>
+
+  {tags.length > 0 && (
+    <nav aria-label="Topics" class="mb-8 flex flex-wrap gap-2">
+      {tags.map((t) => (
+        <a
+          href={`/tags/${t.slug}`}
+          class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+        >
+          #{t.tag}
+          <span class="ml-1 text-slate-500 dark:text-slate-400">{t.count}</span>
+        </a>
+      ))}
+    </nav>
+  )}
+
+  {posts.length === 0 ? (
+    <p class="text-slate-600 dark:text-slate-400">No posts yet — check back soon.</p>
+  ) : (
+    <div class="grid gap-4 sm:grid-cols-2">
+      {posts.map((post) => <PostCard post={post} headingLevel={2} />)}
+    </div>
+  )}
+</BaseLayout>

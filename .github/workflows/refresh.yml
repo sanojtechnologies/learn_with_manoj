@@ -1,0 +1,57 @@
+name: Refresh site (YouTube feed sync)
+
+# Triggers a hosted-deploy hook every 6h so newly uploaded YouTube videos
+# surface on the site without needing a code push. Works with any host that
+# exposes an unauthenticated POST-to-redeploy URL (Vercel, Cloudflare Pages,
+# Netlify, etc.).
+#
+# Setup:
+# 1. In your host's dashboard, create a "Deploy hook" for the production
+#    branch and copy the URL:
+#      - Vercel:           Project → Settings → Git → Deploy Hooks
+#      - Cloudflare Pages: Project → Settings → Builds & deployments → Deploy hooks
+#      - Netlify:          Site → Build & deploy → Build hooks
+# 2. In this GitHub repo → Settings → Secrets and variables → Actions,
+#    add a repository secret named `DEPLOY_HOOK_URL` with that URL.
+# 3. (Optional) Adjust the cron expression below to your preferred cadence.
+
+on:
+  schedule:
+    # Every 6 hours, at minute 0.
+    - cron: '0 */6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-deploy
+  cancel-in-progress: false
+
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify deploy hook is configured
+        env:
+          HOOK: ${{ secrets.DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "${HOOK}" ]; then
+            echo "DEPLOY_HOOK_URL secret is not set; skipping." >&2
+            exit 0
+          fi
+          echo "Hook configured."
+
+      - name: Trigger hosted deploy
+        if: ${{ secrets.DEPLOY_HOOK_URL != '' }}
+        env:
+          HOOK: ${{ secrets.DEPLOY_HOOK_URL }}
+        run: |
+          set -euo pipefail
+          http_code=$(curl -sS -o /tmp/resp.json -w '%{http_code}' -X POST "${HOOK}")
+          echo "HTTP ${http_code}"
+          cat /tmp/resp.json || true
+          if [ "${http_code}" -lt 200 ] || [ "${http_code}" -ge 300 ]; then
+            echo "Deploy hook returned non-2xx status." >&2
+            exit 1
+          fi

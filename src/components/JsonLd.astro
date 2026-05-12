@@ -1,0 +1,20 @@
+---
+/**
+ * Injects one or more JSON-LD blocks into the document head. Accepts either
+ * a single object or an array; falsy entries are dropped so callers can pass
+ * conditional structured data without ternary clutter.
+ */
+interface Props {
+  data: Record<string, unknown> | Array<Record<string, unknown> | null | undefined | false>;
+}
+
+const { data } = Astro.props;
+const items = Array.isArray(data) ? data.filter(Boolean) as Record<string, unknown>[] : [data];
+---
+{items.map((item) => (
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify(item)}
+  />
+))}

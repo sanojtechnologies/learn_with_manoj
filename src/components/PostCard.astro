@@ -1,0 +1,34 @@
+---
+import type { Post } from '@/lib/posts';
+import { formatDate, postUrl, tagUrl } from '@/lib/posts';
+
+interface Props {
+  post: Post;
+  headingLevel?: 2 | 3;
+}
+
+const { post, headingLevel = 2 } = Astro.props;
+const HeadingTag = `h${headingLevel}` as 'h2' | 'h3';
+const href = postUrl(post);
+const pub = post.data.pubDate;
+---
+<article class="group relative flex flex-col gap-2 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-500">
+  <HeadingTag class="text-lg font-semibold leading-snug tracking-tight text-slate-900 group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-400">
+    <a href={href} class="after:absolute after:inset-0">
+      {post.data.title}
+    </a>
+  </HeadingTag>
+  <p class="text-sm text-slate-600 dark:text-slate-400">{post.data.description}</p>
+  <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+    <time datetime={pub.toISOString()}>{formatDate(pub)}</time>
+    {post.data.tags.length > 0 && <span aria-hidden="true">·</span>}
+    {post.data.tags.slice(0, 3).map((tag) => (
+      <a
+        href={tagUrl(tag)}
+        class="relative z-10 rounded-full bg-slate-100 px-2 py-0.5 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+      >
+        #{tag}
+      </a>
+    ))}
+  </div>
+</article>

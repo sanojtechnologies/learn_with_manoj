@@ -1,0 +1,46 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import VideoCard from '@/components/VideoCard.astro';
+import SubscribeCTA from '@/components/SubscribeCTA.astro';
+import { SITE_TITLE, YT_CHANNEL_ID, YT_CHANNEL_URL, YT_HANDLE } from '@/consts';
+import { fetchLatestVideos } from '@/lib/youtube';
+import { breadcrumbJsonLd } from '@/lib/seo';
+
+const videos = await fetchLatestVideos(YT_CHANNEL_ID);
+const title = `Videos by ${YT_HANDLE}`;
+const description = `Every engineering video from the ${SITE_TITLE} YouTube channel — auto-synced from the channel uploads.`;
+const jsonLd = [
+  breadcrumbJsonLd([
+    { name: 'Home', url: '/' },
+    { name: 'Videos', url: '/videos' },
+  ]),
+];
+---
+<BaseLayout title={title} description={description} path="/videos" jsonLd={jsonLd}>
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">Videos</h1>
+    <p class="mt-3 max-w-2xl text-lg text-slate-600 dark:text-slate-300">
+      All {videos.length} uploads from the
+      <a href={YT_CHANNEL_URL} target="_blank" rel="noopener" class="font-medium text-brand-600 hover:underline dark:text-brand-400">
+        {YT_HANDLE}
+      </a>
+      channel, newest first.
+    </p>
+  </header>
+
+  {videos.length === 0 ? (
+    <div class="rounded-xl border border-dashed border-slate-300 p-6 text-slate-600 dark:border-slate-700 dark:text-slate-400">
+      <p>
+        No videos to show yet. Set <code>YT_CHANNEL_ID</code> in
+        <code>src/consts.ts</code> and rebuild to populate this page from the
+        channel's public RSS feed.
+      </p>
+    </div>
+  ) : (
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {videos.map((video) => <VideoCard video={video} headingLevel={2} />)}
+    </div>
+  )}
+
+  <SubscribeCTA />
+</BaseLayout>

@@ -1,0 +1,74 @@
+---
+/**
+ * Lazy, privacy-friendly YouTube embed. Uses the "facade" pattern: paint a
+ * thumbnail + play button; only swap in the real iframe on click. This avoids
+ * loading ~1MB of YouTube JS per page and keeps LCP fast.
+ *
+ * No client JS framework needed — a tiny inline handler does the swap.
+ */
+
+interface Props {
+  id: string;
+  title?: string;
+  /** Optional override; otherwise i.ytimg.com is used. */
+  thumbnail?: string;
+}
+
+const { id, title = 'YouTube video player', thumbnail } = Astro.props;
+const thumbSrc = thumbnail ?? `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+const embedSrc = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+---
+<div
+  class="not-prose group relative my-6 aspect-video w-full overflow-hidden rounded-xl border border-slate-200 bg-black dark:border-slate-800"
+  data-yt-embed
+  data-yt-src={embedSrc}
+  data-yt-title={title}
+>
+  <button
+    type="button"
+    class="absolute inset-0 flex h-full w-full cursor-pointer items-center justify-center"
+    aria-label={`Play video: ${title}`}
+  >
+    <img
+      src={thumbSrc}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      width="1280"
+      height="720"
+      class="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
+    />
+    <span class="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-red-600/95 text-white shadow-lg transition-transform group-hover:scale-110">
+      <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+    </span>
+  </button>
+</div>
+
+<script is:inline>
+  (function () {
+    if (window.__ytFacadeInit) return;
+    window.__ytFacadeInit = true;
+    document.addEventListener('click', function (event) {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const host = target.closest('[data-yt-embed]');
+      if (!host) return;
+      event.preventDefault();
+      const src = host.getAttribute('data-yt-src');
+      const title = host.getAttribute('data-yt-title') || 'YouTube video';
+      if (!src) return;
+      const iframe = document.createElement('iframe');
+      iframe.src = src;
+      iframe.title = title;
+      iframe.loading = 'lazy';
+      iframe.allow =
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allowFullscreen = true;
+      iframe.className = 'absolute inset-0 h-full w-full border-0';
+      host.replaceChildren(iframe);
+    });
+  })();
+</script>

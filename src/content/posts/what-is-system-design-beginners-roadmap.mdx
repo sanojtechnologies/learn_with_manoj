@@ -1,0 +1,142 @@
+---
+title: "What Is System Design? A Beginner's Roadmap to Scaling Real Apps"
+description: "A beginner's roadmap to system design: scalability, availability, load balancing, caching, and monolith vs microservices — with the companion YouTube video."
+pubDate: 2026-03-16
+tags:
+  - system-design
+  - scalability
+  - architecture
+  - backend
+  - beginners
+youtubeId: 284vPdx5oKE
+---
+
+Most engineers freeze the moment someone says **"system design"** — and they shouldn't. Underneath the buzzwords (scalability, high availability, CAP theorem, microservices) is a small set of ideas that, once you've seen them once, you'll keep seeing in every large-scale app you touch.
+
+This post is the written companion to Episode 1 of the [System Design series](https://www.youtube.com/playlist?list=PL55symSEWBbP_3fG_r6AU1XAG9UzokIdE). If you'd rather watch first, the video is right there. If you'd rather read first, keep scrolling — every chapter from the video gets its own section here, with more room to show the trade-offs that didn't fit on screen.
+
+## What system design actually is
+
+System design is the practice of choosing **components, communication patterns, and data flows** that make an application meet its non-functional requirements — the requirements that aren't about features, but about how the features behave under real-world load.
+
+A feature spec says "users can post a tweet." System design answers:
+
+- How many tweets per second can we handle on launch day?
+- What happens when one data center loses power?
+- How do we keep p99 latency under 100 ms when the timeline fan-out is 10,000?
+- How do we roll out a database migration without breaking the mobile app?
+
+Different question, different toolbox.
+
+## The five characteristics worth memorizing
+
+Almost every system design conversation eventually circles back to the same five characteristics. Internalize these and the buzzwords stop feeling like buzzwords.
+
+### 1. Scalability
+
+The system handles **more load** — more users, more data, more requests per second — without falling over or requiring a rewrite. The goal isn't "infinite scale," it's *graceful* scale: when load doubles, work doubles, not eight-fold.
+
+### 2. High Availability (HA)
+
+The system **stays up** even when individual machines, disks, or whole availability zones fail. Measured in nines: 99.9% (~8h 45m downtime/year), 99.99% (~52 min), 99.999% (~5 min). Each extra nine costs roughly an order of magnitude more.
+
+### 3. Reliability
+
+The system gives the **same correct answer** under load and over time. A reliable system doesn't lose your message, doesn't double-charge your card, doesn't show stale data after you refresh. Availability is "is it up?" Reliability is "is it right?"
+
+### 4. Efficiency
+
+The system uses **as few resources as possible** for a given workload — CPU, memory, bandwidth, dollars. Efficiency isn't premature optimization, it's the difference between paying \$100 a month for your infra and paying \$10,000.
+
+### 5. Manageability
+
+The system can be **understood, observed, debugged, and changed** by humans. If only one engineer in the company can deploy it, it isn't manageable. If a production incident takes six hours to diagnose, it isn't manageable.
+
+> If you only remember one thing: every architectural decision is a trade-off between these five. You can't max all five at once — you choose which to optimize and what to give up.
+
+## How to design a high-performing system
+
+The same loose recipe works for almost any system, whether you're sketching it on a whiteboard or building it for real:
+
+1. **Understand the load.** Reads-heavy or writes-heavy? Steady or bursty? 1 RPS or 100,000?
+2. **Estimate capacity.** Back-of-the-envelope: requests/sec × bytes/request, peak vs average, hot keys vs uniform distribution.
+3. **Pick the right storage.** Relational, document, key-value, blob, search — each is a different set of trade-offs.
+4. **Add caches where reads dominate.** A 1 ms cache hit replaces a 50 ms database round-trip.
+5. **Add load balancers where one instance isn't enough.** Distribute work, isolate failures.
+6. **Plan for failure modes** *before* they happen. What breaks if the cache is empty? What breaks if the database is the master? What breaks if half the workers go away?
+
+The video walks through this sequence end-to-end. The rest of this post zooms into the three building blocks that show up in every system: **scaling, load balancing, and caching**.
+
+## Horizontal vs Vertical scaling
+
+Two ways to handle more load — and most production systems end up using both.
+
+| | Vertical scaling | Horizontal scaling |
+|---|---|---|
+| **How** | Bigger machine | More machines |
+| **Limits** | Hardware ceiling | Coordination cost |
+| **Failure blast radius** | One node = whole system | One node = a fraction |
+| **Cost curve** | Linear, then exponential | Mostly linear |
+| **Operationally** | Easy | Harder (config, sharding, consistency) |
+
+A useful rule of thumb: **scale vertically until it hurts, then scale horizontally.** Vertical is free until you hit the limits of one box; horizontal forces you to deal with distributed-systems problems (consensus, replication, eventual consistency) that you don't want until you have to.
+
+## Load balancers in 60 seconds
+
+A load balancer sits in front of a pool of identical app servers and decides which one handles the next request. The simplest possible architecture:
+
+```
+            ┌─────────────┐
+            │   client    │
+            └──────┬──────┘
+                   │
+            ┌──────▼──────┐
+            │load balancer│
+            └──┬───┬───┬──┘
+               │   │   │
+       ┌───────▼┐ ┌▼──┐ ▼───────┐
+       │ app 1  │ │ 2 │ │ app 3 │
+       └────────┘ └───┘ └───────┘
+```
+
+Common strategies:
+
+- **Round-robin** — rotate through servers. Cheap and roughly fair.
+- **Least connections** — send each request to the least-busy server. Better when request durations vary a lot.
+- **IP hash / sticky sessions** — same client always lands on the same server. Useful for in-memory session state; brittle when servers come and go.
+
+Load balancers also do health checks, TLS termination, and rate limiting — and they're the place where you start to get **high availability** almost for free: if one app server dies, the balancer just stops sending it traffic.
+
+## Caching layers that actually matter
+
+Caching is the single highest-leverage performance lever in most systems. The trick is knowing **where** to cache, not whether.
+
+- **Browser cache** — `Cache-Control` headers on static assets. Free, and saves a network round-trip entirely.
+- **CDN edge cache** — push static assets and cacheable API responses to a node near the user. Cuts latency from 200 ms to 20 ms.
+- **Application-level cache** — Redis or Memcached in front of expensive queries. A 1 ms cache hit replaces a 50 ms database call.
+- **Database cache** — query plan cache, buffer pool. Mostly automatic, but worth knowing exists.
+
+The hard problems in caching aren't *adding* a cache — they're **invalidation** (when do you evict?), **stampedes** (what happens when a popular key expires and 10,000 requests hit the database at once?), and **consistency** (the database changed; the cache hasn't).
+
+> "There are only two hard things in computer science: cache invalidation and naming things." — Phil Karlton
+
+He wasn't joking.
+
+## Monolithic vs Microservices
+
+The most-asked question, and the one with the most opinionated answer:
+
+- **Monolith** — one codebase, one deployable, one database. Simple to build, simple to deploy, easy to refactor across boundaries. Hits limits around team size (~20+ engineers) and deployment cadence.
+- **Microservices** — many small services, each owning its own data, communicating over the network. Independent deploys, independent scaling, independent failure. Comes with a tax: network calls, distributed transactions, observability, eventual consistency, coordinated releases.
+
+The honest take: **start with a well-organized monolith.** Extract services only when a clear boundary emerges and the cost of the seam is less than the cost of staying coupled. Most teams that "go microservices on day one" end up with a distributed monolith — all the pain, none of the benefits.
+
+## What's next in the series
+
+This was Episode 1 — the map. The rest of the series walks each landmark in detail:
+
+- **Episode 2** picks up where this one ends — the next video is at [youtu.be/PdX_TUruvC8](https://youtu.be/PdX_TUruvC8).
+- The full [System Design playlist](https://www.youtube.com/playlist?list=PL55symSEWBbP_3fG_r6AU1XAG9UzokIdE) tracks every concept introduced above and grounds them in real-world systems.
+- New episodes auto-surface on the [Videos page](/videos) as they're published; new written deep-dives land in [/blog](/blog).
+
+If you found this useful, the fastest way to stay in the loop is to subscribe on YouTube — that's where new videos drop first, and every video gets a written companion here within a day or two.

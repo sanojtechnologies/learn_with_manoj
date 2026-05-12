@@ -1,0 +1,45 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SubscribeCTA from '@/components/SubscribeCTA.astro';
+import {
+  AUTHOR_BIO,
+  AUTHOR_NAME,
+  SITE_TITLE,
+  YT_CHANNEL_URL,
+  YT_HANDLE,
+} from '@/consts';
+import { breadcrumbJsonLd } from '@/lib/seo';
+
+const title = `About ${SITE_TITLE}`;
+const description = `About ${SITE_TITLE} — ${AUTHOR_BIO}`;
+const jsonLd = [
+  breadcrumbJsonLd([
+    { name: 'Home', url: '/' },
+    { name: 'About', url: '/about' },
+  ]),
+];
+---
+<BaseLayout title={title} description={description} path="/about" jsonLd={jsonLd}>
+  <article class="prose prose-slate mx-auto max-w-3xl">
+    <h1>About {SITE_TITLE}</h1>
+    <p>
+      {SITE_TITLE} is the written companion to the
+      <a href={YT_CHANNEL_URL} target="_blank" rel="noopener">{YT_HANDLE}</a>
+      YouTube channel. Both are run by {AUTHOR_NAME} — {AUTHOR_BIO}
+    </p>
+
+    <h2>What you'll find here</h2>
+    <ul>
+      <li><strong>Written deep-dives</strong> for every video, with the code, references, and trade-offs that didn't fit on screen.</li>
+      <li><strong>System design walkthroughs</strong> with real architectures, not just abstract diagrams.</li>
+      <li><strong>Small, runnable examples</strong> — primitives you can drop into your own projects.</li>
+    </ul>
+
+    <h2>Where to follow along</h2>
+    <ul>
+      <li><a href={YT_CHANNEL_URL} target="_blank" rel="noopener">YouTube — {YT_HANDLE}</a></li>
+      <li><a href="/rss.xml">RSS feed</a> for new posts</li>
+    </ul>
+  </article>
+  <SubscribeCTA />
+</BaseLayout>
