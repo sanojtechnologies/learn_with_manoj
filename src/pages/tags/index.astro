@@ -1,13 +1,30 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getPublishedPosts, summarizeTags } from '@/lib/posts';
+import { getPublishedPosts, summarizeTags, tagMeta } from '@/lib/posts';
 import { breadcrumbJsonLd } from '@/lib/seo';
 
 const posts = await getPublishedPosts();
 const tags = summarizeTags(posts);
+
+// Pillars: the major topic clusters surfaced as headline cards. Anything not
+// in here renders in the "More topics" cloud below.
+const PILLAR_SLUGS = [
+  'system-design',
+  'design-patterns',
+  'ai',
+  'software-engineering',
+] as const;
+
+const pillarMap = new Map(tags.map((t) => [t.slug, t]));
+const pillarCards = PILLAR_SLUGS.map((slug) => pillarMap.get(slug)).filter(
+  (t): t is NonNullable<typeof t> => Boolean(t),
+);
+const pillarSet = new Set(PILLAR_SLUGS);
+const otherTags = tags.filter((t) => !pillarSet.has(t.slug as (typeof PILLAR_SLUGS)[number]));
+
 const title = 'Topics';
 const description =
-  'Browse every engineering topic covered on the LearnwithManoj blog — system design, backend, performance, tooling, and more.';
+  'Every engineering topic covered on LearnwithManoj — system design, design patterns, AI for engineers, backend, databases, security, and more. Pick a topic to see every related post and video.';
 const jsonLd = [
   breadcrumbJsonLd([
     { name: 'Home', url: '/' },
@@ -18,26 +35,59 @@ const jsonLd = [
 <BaseLayout title={title} description={description} path="/tags" jsonLd={jsonLd}>
   <header class="mb-8">
     <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">Topics</h1>
-    <p class="mt-3 max-w-2xl text-lg text-slate-600 dark:text-slate-300">
-      Every tag, ranked by how often it shows up across posts.
+    <p class="mt-3 max-w-3xl text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+      Browse {tags.length} topics across {posts.length} engineering posts. Start with one of the
+      four pillars below for a curated tour through the major subject areas, or scroll to the
+      topic cloud beneath for sub-topics, series tags, and supporting subjects. Every tag links
+      to a page with every post on that subject — plus a list of related topics so you can
+      hop between adjacent areas without going back to the index.
     </p>
   </header>
 
-  {tags.length === 0 ? (
+  {pillarCards.length > 0 && (
+    <section class="mb-12" aria-labelledby="pillars-heading">
+      <h2 id="pillars-heading" class="sr-only">Topic pillars</h2>
+      <div class="grid gap-4 sm:grid-cols-2">
+        {pillarCards.map((t) => (
+          <article class="group relative rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-500">
+            <h3 class="text-base font-semibold text-slate-900 group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-400">
+              <a href={`/tags/${t.slug}`} class="after:absolute after:inset-0">
+                #{t.tag}
+                <span class="ml-2 text-xs font-normal text-slate-500 dark:text-slate-400">{t.count} {t.count === 1 ? 'post' : 'posts'}</span>
+              </a>
+            </h3>
+            <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+              {tagMeta(t.slug, t.tag)}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {otherTags.length > 0 && (
+    <section aria-labelledby="all-tags-heading">
+      <h2 id="all-tags-heading" class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">More topics</h2>
+      <p class="mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
+        Sub-topics, series tags, and supporting subjects. The number next to each tag is how many posts use it.
+      </p>
+      <ul class="mt-4 flex flex-wrap gap-2">
+        {otherTags.map((t) => (
+          <li>
+            <a
+              href={`/tags/${t.slug}`}
+              class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+            >
+              <span>#{t.tag}</span>
+              <span class="text-xs text-slate-500 dark:text-slate-400">{t.count}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {tags.length === 0 && (
     <p class="text-slate-600 dark:text-slate-400">No topics yet — publish a tagged post to see it here.</p>
-  ) : (
-    <ul class="flex flex-wrap gap-2">
-      {tags.map((t) => (
-        <li>
-          <a
-            href={`/tags/${t.slug}`}
-            class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
-          >
-            <span>#{t.tag}</span>
-            <span class="text-xs text-slate-500 dark:text-slate-400">{t.count}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
   )}
 </BaseLayout>

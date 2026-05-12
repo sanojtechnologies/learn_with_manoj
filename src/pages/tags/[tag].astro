@@ -3,9 +3,12 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PostCard from '@/components/PostCard.astro';
 import {
   getPublishedPosts,
+  relatedTags,
   slugifyTag,
   summarizeTags,
+  tagMeta,
   type Post,
+  type TagSummary,
 } from '@/lib/posts';
 import { breadcrumbJsonLd } from '@/lib/seo';
 
@@ -16,9 +19,10 @@ export async function getStaticPaths() {
     const matched = posts.filter((post) =>
       post.data.tags.some((t) => slugifyTag(t) === slug),
     );
+    const related = relatedTags(slug, posts);
     return {
       params: { tag: slug },
-      props: { tag, slug, posts: matched },
+      props: { tag, slug, posts: matched, related },
     };
   });
 }
@@ -27,11 +31,12 @@ interface Props {
   tag: string;
   slug: string;
   posts: Post[];
+  related: TagSummary[];
 }
 
-const { tag, slug, posts } = Astro.props;
-const title = `Posts tagged #${tag}`;
-const description = `Every LearnwithManoj engineering post tagged #${tag} — ${posts.length} ${posts.length === 1 ? 'article' : 'articles'}.`;
+const { tag, slug, posts, related } = Astro.props;
+const description = tagMeta(slug, tag);
+const title = `#${tag} — posts and videos`;
 const path = `/tags/${slug}`;
 const jsonLd = [
   breadcrumbJsonLd([
@@ -39,6 +44,22 @@ const jsonLd = [
     { name: 'Topics', url: '/tags' },
     { name: `#${tag}`, url: path },
   ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `Posts tagged #${tag}`,
+    description,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: posts.length,
+      itemListElement: posts.map((post, idx) => ({
+        '@type': 'ListItem',
+        position: idx + 1,
+        url: `${import.meta.env.SITE ?? ''}/blog/${post.id}`,
+        name: post.data.title,
+      })),
+    },
+  },
 ];
 ---
 <BaseLayout title={title} description={description} path={path} jsonLd={jsonLd}>
@@ -49,12 +70,39 @@ const jsonLd = [
     <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
       <span class="text-slate-500 dark:text-slate-400">#</span>{tag}
     </h1>
-    <p class="mt-3 text-slate-600 dark:text-slate-300">
-      {posts.length} {posts.length === 1 ? 'post' : 'posts'} on this topic.
+    <p class="mt-3 max-w-3xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
+      {description}
+    </p>
+    <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+      {posts.length} {posts.length === 1 ? 'post' : 'posts'} below, newest first.
     </p>
   </header>
 
   <div class="grid gap-4 sm:grid-cols-2">
     {posts.map((post) => <PostCard post={post} headingLevel={2} />)}
   </div>
+
+  {related.length > 0 && (
+    <section class="mt-12" aria-labelledby="related-topics-heading">
+      <h2 id="related-topics-heading" class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">Related topics</h2>
+      <p class="mt-2 max-w-3xl text-sm text-slate-600 dark:text-slate-400">
+        Subjects that frequently appear alongside <span class="font-medium">#{tag}</span>. Click through to see every post on each one.
+      </p>
+      <div class="mt-5 grid gap-4 sm:grid-cols-2">
+        {related.map((r) => (
+          <article class="group relative rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-500">
+            <h3 class="text-sm font-semibold text-slate-900 group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-400">
+              <a href={`/tags/${r.slug}`} class="after:absolute after:inset-0">
+                #{r.tag}
+                <span class="ml-2 text-xs font-normal text-slate-500 dark:text-slate-400">{r.count} {r.count === 1 ? 'post' : 'posts'}</span>
+              </a>
+            </h3>
+            <p class="mt-1.5 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+              {tagMeta(r.slug, r.tag)}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
 </BaseLayout>

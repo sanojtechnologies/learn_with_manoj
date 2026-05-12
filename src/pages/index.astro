@@ -48,6 +48,49 @@ const latestVideos = videos.slice(0, 3);
     </div>
   </section>
 
+  <section class="mt-14" aria-labelledby="topics-heading">
+    <h2 id="topics-heading" class="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">What you'll find here</h2>
+    <p class="mt-3 max-w-3xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
+      This is the written companion to the <a href="https://www.youtube.com/{YT_HANDLE}" target="_blank" rel="noopener" class="font-medium text-brand-600 hover:underline dark:text-brand-400">{YT_HANDLE}</a> YouTube channel.
+      Every video has a post here with chapter timestamps, references, and the trade-offs that didn't fit on screen — so you can skim, search, and link directly to the bits you need.
+      Four topics make up the bulk of the catalogue:
+    </p>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+      <article class="group relative rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-500">
+        <h3 class="text-base font-semibold text-slate-900 group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-400">
+          <a href="/tags/system-design" class="after:absolute after:inset-0">System Design</a>
+        </h3>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+          Scalability, load balancing, caching, sharding, CAP theorem, monolith versus microservices — the architectural decisions that decide whether your app survives its first growth spurt. Sixteen episodes and counting, taught from interview-ready first principles.
+        </p>
+      </article>
+      <article class="group relative rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-500">
+        <h3 class="text-base font-semibold text-slate-900 group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-400">
+          <a href="/tags/design-patterns" class="after:absolute after:inset-0">Design Patterns</a>
+        </h3>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+          The Gang-of-Four patterns reframed without the ceremony. When Singleton is essential and when it's an anti-pattern. When Adapter saves you and when it's just a name for ordinary code. Real problems, real trade-offs, no UML for its own sake.
+        </p>
+      </article>
+      <article class="group relative rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-500">
+        <h3 class="text-base font-semibold text-slate-900 group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-400">
+          <a href="/tags/ai" class="after:absolute after:inset-0">AI for engineers</a>
+        </h3>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+          How large language models actually work — tokenization, embeddings, retrieval-augmented generation, fine-tuning, agents, multi-agent systems — explained for people who write production code, not people who read papers. Thirty-plus episodes between the <a href="/tags/ai-masterclass" class="relative z-10 font-medium text-brand-700 underline-offset-2 hover:underline dark:text-brand-400">AI Masterclass</a> and <a href="/tags/ai-explained" class="relative z-10 font-medium text-brand-700 underline-offset-2 hover:underline dark:text-brand-400">AI Explained</a> series.
+        </p>
+      </article>
+      <article class="group relative rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-500">
+        <h3 class="text-base font-semibold text-slate-900 group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-400">
+          <a href="/tags/software-engineering" class="after:absolute after:inset-0">Software engineering essentials</a>
+        </h3>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+          Databases and query optimisation, Linux server security, container orchestration, the Model Context Protocol, and the unglamorous bits between the keyboard and a system that scales. Practical walkthroughs you can apply to your next pull request.
+        </p>
+      </article>
+    </div>
+  </section>
+
   {latestPosts.length > 0 && (
     <section class="mt-14" aria-labelledby="latest-posts-heading">
       <div class="flex items-baseline justify-between">
