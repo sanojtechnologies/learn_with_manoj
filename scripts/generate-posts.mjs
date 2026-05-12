@@ -216,7 +216,7 @@ function buildBody({ rawDescription, chapters, links, fittedTitle, lengthMin, le
     body += `## Resources\n\n${resources.join('\n')}\n\n`;
   }
 
-  body += `Browse more posts in [#${hubTag}](/tags/${hubTag}) or visit the [Videos page](/videos) for everything else from the channel.`;
+  body += `For more in this series, visit the [#${hubTag} tag page](/tags/${hubTag}) or jump to the [channel uploads list](/videos) for everything else.`;
   return body;
 }
 

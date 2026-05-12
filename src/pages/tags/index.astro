@@ -22,9 +22,9 @@ const pillarCards = PILLAR_SLUGS.map((slug) => pillarMap.get(slug)).filter(
 const pillarSet = new Set(PILLAR_SLUGS);
 const otherTags = tags.filter((t) => !pillarSet.has(t.slug as (typeof PILLAR_SLUGS)[number]));
 
-const title = 'Topics';
+const title = 'Topics — system design, design patterns, AI and more';
 const description =
-  'Every engineering topic covered on LearnwithManoj — system design, design patterns, AI for engineers, backend, databases, security, and more. Pick a topic to see every related post and video.';
+  'Every engineering topic covered on LearnwithManoj: system design, design patterns, AI for engineers, backend, databases, and security.';
 const jsonLd = [
   breadcrumbJsonLd([
     { name: 'Home', url: '/' },

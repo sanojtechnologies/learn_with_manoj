@@ -17,10 +17,39 @@ const [posts, videos] = await Promise.all([
   getPublishedPosts(),
   fetchLatestVideos(YT_CHANNEL_ID),
 ]);
-const latestPosts = posts.slice(0, 3);
-const latestVideos = videos.slice(0, 3);
+// "Start here" picks — cornerstone posts for each major topic. Lookup by slug
+// so renaming a post breaks loudly (instead of silently dropping the card).
+const cornerstoneSlugs = [
+  'what-is-system-design-beginners-roadmap',
+  'composite-pattern-files-folders-trees',
+  'ai-explained-finally-understand-how-ai-works-no-code',
+] as const;
+const cornerstones = cornerstoneSlugs
+  .map((slug) => posts.find((p) => p.id === slug))
+  .filter((p): p is NonNullable<typeof p> => Boolean(p));
+
+const cornerstoneIds = new Set(cornerstones.map((p) => p.id));
+
+// Each section on the homepage shows unique content: "Latest posts" excludes
+// cornerstones already shown above, and "Latest videos" excludes anything that
+// shares a YouTube ID with the latest posts. That prevents the same title from
+// rendering as two sibling <h3>s on the same page.
+const latestPosts = posts
+  .filter((p) => !cornerstoneIds.has(p.id))
+  .slice(0, 3);
+
+const shownVideoIds = new Set(
+  [...latestPosts, ...cornerstones]
+    .map((p) => p.data.youtubeId)
+    .filter(Boolean) as string[],
+);
+const latestVideos = videos
+  .filter((v) => !shownVideoIds.has(v.id))
+  .slice(0, 3);
+
+const homepageTitle = 'Engineering tutorials, system design & AI for engineers';
 ---
-<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION} path="/">
+<BaseLayout title={homepageTitle} description={SITE_DESCRIPTION} path="/">
   <section class="hero-bg relative -mx-4 -mt-8 overflow-hidden px-4 pb-10 pt-12 sm:-mx-6 sm:-mt-12 sm:px-6 sm:pb-16 sm:pt-20">
     <div class="mx-auto max-w-3xl">
       <p class="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-700 dark:border-brand-900 dark:bg-brand-900/30 dark:text-brand-400">
@@ -51,8 +80,9 @@ const latestVideos = videos.slice(0, 3);
   <section class="mt-14" aria-labelledby="topics-heading">
     <h2 id="topics-heading" class="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">What you'll find here</h2>
     <p class="mt-3 max-w-3xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
-      This is the written companion to the <a href="https://www.youtube.com/{YT_HANDLE}" target="_blank" rel="noopener" class="font-medium text-brand-600 hover:underline dark:text-brand-400">{YT_HANDLE}</a> YouTube channel.
-      Every video has a post here with chapter timestamps, references, and the trade-offs that didn't fit on screen — so you can skim, search, and link directly to the bits you need.
+      {SITE_TITLE} is the written companion to the {YT_HANDLE} YouTube channel.
+      Every video has a post here with chapter timestamps, external references, and the trade-offs that didn&rsquo;t fit on screen — so you can skim, search, and link directly to the bits you need.
+      The blog is plain HTML, free of trackers and pop-ups, fast on mobile, and friendly to whichever feed reader you already use.
       Four topics make up the bulk of the catalogue:
     </p>
     <div class="mt-6 grid gap-4 sm:grid-cols-2">
@@ -91,6 +121,35 @@ const latestVideos = videos.slice(0, 3);
     </div>
   </section>
 
+  {cornerstones.length > 0 && (
+    <section class="mt-14" aria-labelledby="start-here-heading">
+      <h2 id="start-here-heading" class="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Start here</h2>
+      <p class="mt-3 max-w-3xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
+        New to the site? These three posts are the doors into the three biggest topic areas.
+        Read one and follow the related-posts trail at the bottom — each post links to its
+        prerequisites and natural follow-ups, so you can build a path through the catalogue
+        without knowing the curriculum in advance.
+      </p>
+      <ol class="mt-6 grid gap-4 sm:grid-cols-3">
+        {cornerstones.map((post, i) => (
+          <li>
+            <article class="group relative h-full rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-500">
+              <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand-50 text-xs font-bold text-brand-700 dark:bg-brand-900/40 dark:text-brand-400">{i + 1}</span>
+              <h3 class="mt-3 text-sm font-semibold leading-snug text-slate-900 group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-400">
+                <a href={`/blog/${post.id}`} class="after:absolute after:inset-0">
+                  {post.data.title}
+                </a>
+              </h3>
+              <p class="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+                {post.data.description}
+              </p>
+            </article>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+
   {latestPosts.length > 0 && (
     <section class="mt-14" aria-labelledby="latest-posts-heading">
       <div class="flex items-baseline justify-between">
@@ -114,6 +173,39 @@ const latestVideos = videos.slice(0, 3);
       </div>
     </section>
   )}
+
+  <section class="mt-14" aria-labelledby="faq-heading">
+    <h2 id="faq-heading" class="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Frequently asked</h2>
+    <p class="mt-3 max-w-3xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
+      A handful of questions I get often. If yours isn&rsquo;t here, the <a href="/about" class="font-medium text-brand-600 hover:underline dark:text-brand-400">about page</a> goes into more detail on how the site is built and what to expect.
+    </p>
+    <dl class="mt-6 grid gap-5 sm:grid-cols-2">
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <dt class="text-base font-semibold text-slate-900 dark:text-white">Do I need to watch the video to understand the post?</dt>
+        <dd class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+          No. Every post is self-contained — diagrams, code samples, references, and the same trade-off discussion. The embedded video is there if you prefer the spoken explanation or want to skip to a chapter, but reading the article alone is enough to follow the argument and ship the change.
+        </dd>
+      </div>
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <dt class="text-base font-semibold text-slate-900 dark:text-white">Why a blog if you already have a channel?</dt>
+        <dd class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+          Some things are slow to read on a slide and faster in prose: API signatures, command-line flags, JSON payloads, performance numbers. The blog also makes it possible to deep-link a teammate to a specific section, copy a code snippet without pausing playback, and search the whole catalogue with browser find.
+        </dd>
+      </div>
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <dt class="text-base font-semibold text-slate-900 dark:text-white">How often is new content published?</dt>
+        <dd class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+          Videos go up roughly twice a week. The companion post lands on the same day for new releases and is back-filled in batches for the existing catalogue. You can keep an eye on the latest drops via the <a href="/rss.xml" class="font-medium text-brand-700 hover:underline dark:text-brand-400">site feed</a> or the channel itself.
+        </dd>
+      </div>
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <dt class="text-base font-semibold text-slate-900 dark:text-white">Can I share these posts in talks, classes, or team docs?</dt>
+        <dd class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+          Yes, please — that&rsquo;s exactly what they&rsquo;re here for. Drop a link to the post in your Slack, study group, or course notes. If you find something wrong or want to suggest a follow-up topic, the channel comments and the contact details on the about page both reach me.
+        </dd>
+      </div>
+    </dl>
+  </section>
 
   <SubscribeCTA />
 </BaseLayout>

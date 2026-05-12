@@ -19,13 +19,13 @@ const isActive = (href: string): boolean => {
       </span>
     </a>
 
-    <nav aria-label="Primary" class="hidden items-center gap-1 text-sm sm:flex">
+    <nav aria-label="Primary" class="-mx-1 flex flex-1 items-center gap-1 overflow-x-auto px-1 text-sm">
       {NAV_LINKS.map((link) => (
         <a
           href={link.href}
           aria-current={isActive(link.href) ? 'page' : undefined}
           class:list={[
-            'rounded-md px-3 py-1.5 transition-colors',
+            'whitespace-nowrap rounded-md px-3 py-1.5 transition-colors',
             isActive(link.href)
               ? 'bg-slate-100 font-medium text-slate-900 dark:bg-slate-800 dark:text-white'
               : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white',
@@ -40,7 +40,7 @@ const isActive = (href: string): boolean => {
       href={YT_SUBSCRIBE_URL}
       target="_blank"
       rel="noopener"
-      class="inline-flex items-center gap-1.5 rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700"
+      class="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700"
     >
       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
@@ -48,25 +48,4 @@ const isActive = (href: string): boolean => {
       <span class="hidden sm:inline">Subscribe</span>
     </a>
   </div>
-
-  <nav aria-label="Primary mobile" class="border-t border-slate-200/70 px-4 py-2 sm:hidden dark:border-slate-800/70">
-    <ul class="flex gap-1 overflow-x-auto text-sm">
-      {NAV_LINKS.map((link) => (
-        <li>
-          <a
-            href={link.href}
-            aria-current={isActive(link.href) ? 'page' : undefined}
-            class:list={[
-              'inline-block rounded-md px-3 py-1.5 whitespace-nowrap',
-              isActive(link.href)
-                ? 'bg-slate-100 font-medium text-slate-900 dark:bg-slate-800 dark:text-white'
-                : 'text-slate-600 dark:text-slate-300',
-            ]}
-          >
-            {link.label}
-          </a>
-        </li>
-      ))}
-    </ul>
-  </nav>
 </header>

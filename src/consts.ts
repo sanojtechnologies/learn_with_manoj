@@ -6,8 +6,12 @@
 export const SITE_URL = 'https://learnwithmanoj.com';
 export const SITE_TITLE = 'LearnwithManoj';
 export const SITE_TAGLINE = 'Never stop Learning.';
+/**
+ * Default <meta name="description">. Kept under ~145 chars (~960 px in most
+ * SERP fonts) so search engines and SEO checkers don't truncate or warn.
+ */
 export const SITE_DESCRIPTION =
-  'Never stop Learning — engineering tutorials, system design, and software craftsmanship. Written deep-dives and companion videos from the LearnwithManoj YouTube channel.';
+  'Engineering tutorials, system design, design patterns and AI for engineers — the written companion to the LearnwithManoj YouTube channel.';
 export const SITE_LANG = 'en';
 export const SITE_LOCALE = 'en_US';
 

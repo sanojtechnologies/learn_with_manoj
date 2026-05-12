@@ -5,9 +5,16 @@ import { formatDate, postUrl, tagUrl } from '@/lib/posts';
 interface Props {
   post: Post;
   headingLevel?: 2 | 3;
+  /**
+   * Render tag chips below the meta row. Off by default on cards used inside
+   * homepage strips and related-posts grids, where many cards from the same
+   * topic would produce duplicate anchor texts on a single page. On listing
+   * pages where the chips help navigation (blog index, tag index), pass true.
+   */
+  showTags?: boolean;
 }
 
-const { post, headingLevel = 2 } = Astro.props;
+const { post, headingLevel = 2, showTags = false } = Astro.props;
 const HeadingTag = `h${headingLevel}` as 'h2' | 'h3';
 const href = postUrl(post);
 const pub = post.data.pubDate;
@@ -21,8 +28,8 @@ const pub = post.data.pubDate;
   <p class="text-sm text-slate-600 dark:text-slate-400">{post.data.description}</p>
   <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
     <time datetime={pub.toISOString()}>{formatDate(pub)}</time>
-    {post.data.tags.length > 0 && <span aria-hidden="true">·</span>}
-    {post.data.tags.slice(0, 3).map((tag) => (
+    {showTags && post.data.tags.length > 0 && <span aria-hidden="true">·</span>}
+    {showTags && post.data.tags.slice(0, 3).map((tag) => (
       <a
         href={tagUrl(tag)}
         class="relative z-10 rounded-full bg-slate-100 px-2 py-0.5 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"

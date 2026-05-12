@@ -5,12 +5,19 @@ interface Props {
   variant?: 'default' | 'inline';
   heading?: string;
   body?: string;
+  ctaLabel?: string;
 }
 
+// Per-variant defaults. The inline CTA (rendered immediately under the video
+// embed) uses different anchor text from the bottom-of-post CTA so the same
+// page doesn't ship two identical anchors when both render.
 const {
   variant = 'default',
   heading = `Subscribe to ${SITE_TITLE} on YouTube`,
-  body = `Practical engineering walkthroughs, system design deep-dives, and code-first tutorials — new videos drop weekly. Subscribe so you never miss one.`,
+  body = variant === 'inline'
+    ? `Like this format? Hundreds more walkthroughs like this one live on the channel — new videos drop weekly.`
+    : `Practical engineering walkthroughs, system design deep-dives, and code-first tutorials — new videos drop weekly. Subscribe so you never miss one.`,
+  ctaLabel = variant === 'inline' ? 'Watch the channel' : 'Subscribe on YouTube',
 } = Astro.props;
 ---
 <aside
@@ -35,6 +42,6 @@ const {
     <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
       <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
     </svg>
-    Subscribe on YouTube
+    {ctaLabel}
   </a>
 </aside>

@@ -1,0 +1,78 @@
+---
+/**
+ * Per-post social share links. Stateless: every URL is pre-encoded at build
+ * time, no client JS, no third-party analytics. Each link opens in a new tab
+ * with `rel="noopener"` so we don't leak the user's session to the target.
+ */
+import { SITE_TITLE } from '@/consts';
+
+interface Props {
+  url: string;
+  title: string;
+}
+
+const { url, title } = Astro.props;
+const u = encodeURIComponent(url);
+const t = encodeURIComponent(title);
+
+const targets = [
+  {
+    name: 'X (Twitter)',
+    href: `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
+    iconPath: 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.65l-5.214-6.821L4.99 21.75H1.683l7.73-8.835L1.254 2.25h6.815l4.712 6.231ZM17.083 19.77h1.832L7.043 4.126H5.078L17.083 19.77Z',
+  },
+  {
+    name: 'LinkedIn',
+    href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
+    iconPath: 'M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.95v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.78C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.78 24h20.44c.99 0 1.78-.77 1.78-1.73V1.73C24 .77 23.21 0 22.22 0Z',
+  },
+  {
+    name: 'Reddit',
+    href: `https://www.reddit.com/submit?url=${u}&title=${t}`,
+    iconPath: 'M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0Zm5.84 13.5a1.5 1.5 0 0 1-2.04 1.4 4.32 4.32 0 0 1-2.83 1.36c-.05.4-.08.8-.08 1.2 0 1.65-1.36 2.98-3.04 2.98s-3.04-1.33-3.04-2.98c0-.4-.03-.8-.08-1.2a4.32 4.32 0 0 1-2.83-1.36 1.5 1.5 0 0 1-1.04-2.66c.27-.25.62-.38.97-.36.6-.97 1.62-1.7 2.83-1.9.4-.07.7-.42.7-.83V8.4c0-.7.57-1.27 1.28-1.27.2 0 .4.05.57.13l3.16-1.46a.96.96 0 0 1 1.36.94c0 .12-.03.24-.07.35l-.78 2.36c1.42.1 2.63.92 3.25 2.04.35-.02.7.11.97.36.3.27.47.66.47 1.05Zm-9.84-.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm-3 4.5a3 3 0 0 1-2.12-.88.5.5 0 0 1 .71-.71 2 2 0 0 0 2.83 0 .5.5 0 0 1 .71.71A3 3 0 0 1 11 17.5Z',
+  },
+  {
+    name: 'Hacker News',
+    href: `https://news.ycombinator.com/submitlink?u=${u}&t=${t}`,
+    iconPath: 'M0 0v24h24V0H0Zm11.5 14.7L7.5 6h2.3l2.7 6 2.6-6h2.3l-4 8.7V19h-1.9v-4.3Z',
+  },
+];
+---
+<aside class="mt-10 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 not-prose dark:border-slate-800 dark:bg-slate-900/40" aria-labelledby="share-heading">
+  <p id="share-heading" class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+    Found this useful? Share it
+  </p>
+  <ul class="mt-3 flex flex-wrap gap-2">
+    {targets.map((target) => (
+      <li>
+        <a
+          href={target.href}
+          target="_blank"
+          rel="noopener nofollow"
+          aria-label={`Share "${title}" on ${target.name}`}
+          class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:border-brand-400 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-brand-500 dark:hover:text-brand-400"
+        >
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d={target.iconPath} />
+          </svg>
+          <span>{target.name}</span>
+        </a>
+      </li>
+    ))}
+    <li>
+      <a
+        href={`mailto:?subject=${t}&body=${u}`}
+        aria-label={`Share "${title}" by email`}
+        class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:border-brand-400 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-brand-500 dark:hover:text-brand-400"
+      >
+        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6Zm-2 0-8 5-8-5h16Zm0 12H4V8l8 5 8-5v10Z" />
+        </svg>
+        <span>Email</span>
+      </a>
+    </li>
+  </ul>
+  <p class="mt-3 text-[11px] text-slate-500 dark:text-slate-400">
+    Share links open in a new tab. {SITE_TITLE} doesn&rsquo;t track clicks or use any third-party analytics.
+  </p>
+</aside>

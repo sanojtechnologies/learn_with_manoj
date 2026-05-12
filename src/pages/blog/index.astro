@@ -42,7 +42,7 @@ const jsonLd = [
     <p class="text-slate-600 dark:text-slate-400">No posts yet — check back soon.</p>
   ) : (
     <div class="grid gap-4 sm:grid-cols-2">
-      {posts.map((post) => <PostCard post={post} headingLevel={2} />)}
+      {posts.map((post) => <PostCard post={post} headingLevel={2} showTags />)}
     </div>
   )}
 </BaseLayout>
