@@ -43,12 +43,20 @@ export interface ResolvedSeo {
   noindex: boolean;
 }
 
-/** Resolve a path or absolute URL against {@link SITE_URL}. */
+/**
+ * Resolve a path or absolute URL against {@link SITE_URL}.
+ *
+ * The site is configured with `trailingSlash: 'never'`, so every URL must be
+ * emitted in its slashless form — including the root, which would otherwise
+ * render as `https://learnwithmanoj.com/` and mismatch the URL that search
+ * engines and SEO crawlers actually use (`https://learnwithmanoj.com`).
+ */
 export function absoluteUrl(pathOrUrl: string): string {
   if (/^https?:\/\//u.test(pathOrUrl)) return pathOrUrl;
   const base = SITE_URL.replace(/\/$/u, '');
+  if (pathOrUrl === '' || pathOrUrl === '/') return base;
   const path = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
-  return `${base}${path}`;
+  return `${base}${path.replace(/\/$/u, '')}`;
 }
 
 export function resolveSeo(input: SeoInput): ResolvedSeo {
