@@ -6,7 +6,11 @@
     </linearGradient>
   </defs>
   <rect width="180" height="180" rx="32" ry="32" fill="url(#bg)"/>
-  <text x="90" y="124" text-anchor="middle"
-        font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
-        font-size="120" font-weight="800" fill="#ffffff">M</text>
+  <!--
+    Brand "M" as a vector path so we don't depend on whatever font librsvg /
+    Safari / iOS falls back to at render time. Drawn with three strokes:
+    /\\/, centred at x=90 (the SVG's half-width).
+  -->
+  <path fill="#ffffff"
+        d="M46 130 V 50 H 70 L 90 100 L 110 50 H 134 V 130 H 116 V 78 L 96 128 H 84 L 64 78 V 130 Z"/>
 </svg>
