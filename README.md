@@ -179,6 +179,8 @@ The included [`vercel.json`](vercel.json) layers production hardening on top of 
 
 You don't need a custom routing config — Vercel handles Astro's directory-style URLs (`/blog/composite-pattern/index.html` → `/blog/composite-pattern`) natively.
 
+**Vercel Analytics:** [`@vercel/analytics`](https://vercel.com/docs/analytics) is wired in `BaseLayout.astro` via `<Analytics />`. It only sends data on Vercel (no-op locally). After deploy, open the project in Vercel → **Analytics** → **Enable** if prompted. Page views appear in the dashboard within a few minutes; no env vars or cookies banner are required for the default Web Analytics product.
+
 ### Cloudflare Pages (alternative)
 
 1. Push this repo to GitHub.
