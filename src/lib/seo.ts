@@ -144,7 +144,7 @@ export function personJsonLd() {
     name: AUTHOR_NAME,
     description: AUTHOR_BIO,
     url: SITE_URL,
-    sameAs: [YT_CHANNEL_URL, SOCIAL.github, SOCIAL.twitter].filter(Boolean),
+    sameAs: [YT_CHANNEL_URL, SOCIAL.sanoj, SOCIAL.github, SOCIAL.twitter].filter(Boolean),
   };
 }
 

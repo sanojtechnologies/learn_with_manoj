@@ -30,10 +30,14 @@ export const YT_CHANNEL_ID = 'UCIBH6NpFY2CMvORLjPix6oQ';
 export const YT_CHANNEL_URL = `https://www.youtube.com/${YT_HANDLE}`;
 export const YT_SUBSCRIBE_URL = `${YT_CHANNEL_URL}?sub_confirmation=1`;
 
+/** Career coaching practice — linked from About and Person sameAs. */
+export const SANOJ_TECHNOLOGIES_URL = 'https://sanojtechnologies.com/';
+
 export const SOCIAL = {
   youtube: YT_CHANNEL_URL,
   github: 'https://github.com/',
   twitter: 'https://twitter.com/',
+  sanoj: SANOJ_TECHNOLOGIES_URL,
 } as const;
 
 export const NAV_LINKS = [

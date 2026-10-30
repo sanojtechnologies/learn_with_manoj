@@ -1,5 +1,5 @@
 ---
-import { SITE_TITLE, YT_CHANNEL_URL } from '@/consts';
+import { SANOJ_TECHNOLOGIES_URL, SITE_TITLE, YT_CHANNEL_URL } from '@/consts';
 const year = new Date().getFullYear();
 ---
 <footer class="mt-16 border-t border-slate-200/70 bg-slate-50/60 dark:border-slate-800/70 dark:bg-slate-900/40">
@@ -9,6 +9,7 @@ const year = new Date().getFullYear();
       <a href="/rss.xml" class="hover:text-slate-900 dark:hover:text-white">RSS</a>
       <a href="/sitemap-index.xml" class="hover:text-slate-900 dark:hover:text-white">Sitemap</a>
       <a href={YT_CHANNEL_URL} target="_blank" rel="noopener" class="hover:text-slate-900 dark:hover:text-white">YouTube</a>
+      <a href={SANOJ_TECHNOLOGIES_URL} target="_blank" rel="noopener" class="hover:text-slate-900 dark:hover:text-white">Coaching</a>
       <span class="hidden sm:inline" aria-hidden="true">·</span>
       <span>Built with Astro.</span>
     </div>
