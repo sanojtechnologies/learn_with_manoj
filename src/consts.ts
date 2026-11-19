@@ -33,10 +33,12 @@ export const YT_SUBSCRIBE_URL = `${YT_CHANNEL_URL}?sub_confirmation=1`;
 /** Career coaching practice — linked from About and Person sameAs. */
 export const SANOJ_TECHNOLOGIES_URL = 'https://sanojtechnologies.com/';
 
+/**
+ * Profiles surfaced in Person JSON-LD `sameAs`. Only add real profile URLs
+ * (e.g. github: 'https://github.com/<handle>') — bare domains are invalid.
+ */
 export const SOCIAL = {
   youtube: YT_CHANNEL_URL,
-  github: 'https://github.com/',
-  twitter: 'https://twitter.com/',
   sanoj: SANOJ_TECHNOLOGIES_URL,
 } as const;
 

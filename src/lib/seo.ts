@@ -12,7 +12,6 @@ import {
   SITE_TITLE,
   SITE_URL,
   SOCIAL,
-  YT_CHANNEL_URL,
 } from '@/consts';
 
 export interface SeoInput {
@@ -144,7 +143,7 @@ export function personJsonLd() {
     name: AUTHOR_NAME,
     description: AUTHOR_BIO,
     url: SITE_URL,
-    sameAs: [YT_CHANNEL_URL, SOCIAL.sanoj, SOCIAL.github, SOCIAL.twitter].filter(Boolean),
+    sameAs: Object.values(SOCIAL),
   };
 }
 
