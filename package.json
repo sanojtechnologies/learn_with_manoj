@@ -12,7 +12,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
-    "icons": "node scripts/render-static-images.mjs"
+    "icons": "node scripts/render-static-images.mjs",
+    "videos:dates": "node scripts/sync-video-dates.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",

@@ -11,6 +11,7 @@
 
 import { XMLParser } from 'fast-xml-parser';
 import { Innertube } from 'youtubei.js';
+import recordedDates from '@/data/video-dates.json';
 
 export interface YouTubeVideo {
   id: string;
@@ -91,11 +92,17 @@ export async function fetchLatestVideos(
 const DATE_LOOKUP_CONCURRENCY = 8;
 
 /**
- * Fill `publishedAt` for videos that lack it, from each video's microformat
- * publish date. Best effort: a failed lookup leaves that video undated and
- * never fails the build.
+ * Fill `publishedAt` for videos that lack it: first from
+ * src/data/video-dates.json, then from each video's own page. Best effort: a
+ * failed lookup leaves that video undated and never fails the build.
  */
-async function fillMissingDates(videos: YouTubeVideo[]): Promise<YouTubeVideo[]> {
+async function fillMissingDates(input: YouTubeVideo[]): Promise<YouTubeVideo[]> {
+  // Dates recorded by `npm run videos:dates` come first: cloud build servers
+  // are often refused the live lookups below.
+  const recorded = recordedDates as Record<string, string>;
+  const videos = input.map((v) =>
+    v.publishedAt || !recorded[v.id] ? v : { ...v, publishedAt: new Date(recorded[v.id]) },
+  );
   const missing = videos.filter((v) => !v.publishedAt);
   if (missing.length === 0) return videos;
   let yt: Innertube;
