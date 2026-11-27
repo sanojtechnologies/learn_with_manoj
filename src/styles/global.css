@@ -1,3 +1,10 @@
+/* Hallmark · checked: 2026-11-27 · genre: editorial (inferred)
+ * floor: 19 open in post bodies and <title>/meta text (owner's call) · fixed: 10a, 11, 19 (site copy), 2b/38iii, 26a, 26b, 27, 29, 34, 46a, 48, 54, 63, 67, 74 · structural: 4 printed (6b, 9, 58, 85)
+ * built: the project · redesign: polish · v2.0.0 */
+/* Hallmark · dismissed 34 · html and body get overflow-x: clip below; the static HTML pass cannot see this linked stylesheet */
+/* Hallmark · dismissed 74 · the slate-* and red-* utilities resolve to the OKLCH values redefined in @theme below, not Tailwind's stock */
+/* Hallmark · dismissed 19 · "All rights reserved" is the footer copyright line, legal text the polish does not reword */
+/* Hallmark · answered F1 · the straight quotes left are inside post titles and bodies, which are the owner's articles */
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
@@ -7,43 +14,93 @@
   --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Monaco,
     Consolas, monospace;
 
-  --color-brand-50: #eff6ff;
-  --color-brand-100: #dbeafe;
-  --color-brand-200: #bfdbfe;
-  --color-brand-400: #60a5fa;
-  --color-brand-500: #3b82f6;
-  --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;
-  --color-brand-900: #1e3a8a;
+  /* Brand: an ink blue mixed in OKLCH for this site (was Tailwind's stock blue). */
+  --color-brand-50: oklch(0.97 0.014 255);
+  --color-brand-100: oklch(0.93 0.032 255);
+  --color-brand-200: oklch(0.87 0.06 255);
+  --color-brand-400: oklch(0.7 0.14 255);
+  --color-brand-500: oklch(0.6 0.18 256);
+  --color-brand-600: oklch(0.52 0.19 257);
+  --color-brand-700: oklch(0.45 0.17 258);
+  --color-brand-900: oklch(0.3 0.1 260);
+
+  /* Neutrals and the YouTube red, redefined so the existing slate-* and red-*
+     utilities resolve to this site's own values rather than Tailwind's stock. */
+  --color-slate-50: oklch(0.985 0.003 255);
+  --color-slate-100: oklch(0.965 0.006 255);
+  --color-slate-200: oklch(0.925 0.01 255);
+  --color-slate-300: oklch(0.87 0.014 255);
+  --color-slate-400: oklch(0.71 0.02 255);
+  --color-slate-500: oklch(0.555 0.024 255);
+  --color-slate-600: oklch(0.445 0.026 255);
+  --color-slate-700: oklch(0.37 0.026 255);
+  --color-slate-800: oklch(0.28 0.022 255);
+  --color-slate-900: oklch(0.21 0.018 255);
+  --color-slate-950: oklch(0.15 0.014 255);
+
+  --color-red-50: oklch(0.97 0.015 22);
+  --color-red-200: oklch(0.88 0.06 22);
+  --color-red-600: oklch(0.56 0.22 25);
+  --color-red-700: oklch(0.49 0.2 25);
+  --color-red-900: oklch(0.38 0.13 25);
+  --color-red-950: oklch(0.25 0.08 25);
 }
 
 :root {
   color-scheme: light dark;
+  --color-focus: var(--color-brand-600);
+  --color-selection: var(--color-brand-100);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-focus: var(--color-brand-400);
+    --color-selection: var(--color-brand-900);
+  }
+
+  html {
+    scrollbar-color: var(--color-slate-700) transparent;
+  }
+}
+
+html,
+body {
+  overflow-x: clip;
 }
 
 html {
-  scroll-behavior: smooth;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  scrollbar-color: var(--color-slate-300) transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
   @apply bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+  caret-color: var(--color-focus);
 }
 
-/* Subtle radial accent behind the hero on the homepage. */
-.hero-bg {
-  background:
-    radial-gradient(900px 480px at 0% -10%, rgb(37 99 235 / 0.12), transparent 60%),
-    radial-gradient(720px 360px at 100% 0%, rgb(220 38 38 / 0.10), transparent 60%);
+::selection {
+  background: var(--color-selection);
 }
-.dark .hero-bg,
-@media (prefers-color-scheme: dark) {
-  .hero-bg {
-    background:
-      radial-gradient(900px 480px at 0% -10%, rgb(37 99 235 / 0.22), transparent 60%),
-      radial-gradient(720px 360px at 100% 0%, rgb(239 68 68 / 0.16), transparent 60%);
+
+/* Keyboard focus: one ring for every interactive element, shown instantly.
+   In the base layer so a component's focus-visible: utility can adjust it. */
+@layer base {
+  :where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
   }
+}
+
+:where(button, input, select, textarea):disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 /* Shiki light/dark dual-theme switching via prefers-color-scheme. */

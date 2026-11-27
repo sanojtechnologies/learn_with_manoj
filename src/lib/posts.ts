@@ -127,45 +127,45 @@ export function findRelated(
  */
 const TAG_DESCRIPTIONS: Record<string, string> = {
   'system-design':
-    'Scalability, load balancing, caching, sharding, CAP theorem, monolith versus microservices — the architectural decisions that decide whether your app survives its first growth spurt.',
+    'Scalability, load balancing, caching, sharding, CAP theorem, monolith versus microservices: the architectural decisions that decide whether your app survives its first growth spurt.',
   'design-patterns':
     'The Gang-of-Four patterns reframed without the ceremony. When each pattern solves a real problem, when it is overkill, and the code smells that call for it.',
   'creational-patterns':
-    'Patterns for creating objects without coupling client code to concrete classes — Singleton, Factory Method, Abstract Factory, Builder, Prototype. With practical guidance on when each one actually helps.',
+    'Patterns for creating objects without coupling client code to concrete classes: Singleton, Factory Method, Abstract Factory, Builder, Prototype. With practical guidance on when each one actually helps.',
   'structural-patterns':
-    'Patterns for composing classes and objects into larger structures while keeping the system flexible and efficient — Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy.',
+    'Patterns for composing classes and objects into larger structures while keeping the system flexible and efficient: Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy.',
   'behavioral-patterns':
-    'Patterns for communication and responsibility-sharing between objects — Strategy, Observer, Command, Iterator, State, Template Method, Visitor, Mediator, Memento, Chain of Responsibility.',
+    'Patterns for communication and responsibility-sharing between objects: Strategy, Observer, Command, Iterator, State, Template Method, Visitor, Mediator, Memento, Chain of Responsibility.',
   ai:
-    'How LLMs actually work — tokenization, embeddings, RAG, fine-tuning, agents — explained for engineers who ship production code, not papers.',
+    'How LLMs actually work (tokenization, embeddings, RAG, fine-tuning, agents), explained for engineers who ship production code, not papers.',
   'ai-masterclass':
     'The AI Masterclass series: a numbered, beginner-friendly walkthrough of every concept you need to ship LLM-powered applications, from training to inference to RAG to alignment.',
   'ai-explained':
-    'The AI Explained series: short, focused episodes on individual AI building blocks — transformers, attention, tokenization, memory, tool use, multi-agent systems, and more.',
+    'The AI Explained series: short, focused episodes on individual AI building blocks: transformers, attention, tokenization, memory, tool use, multi-agent systems, and more.',
   'ai-agents':
-    'How autonomous AI agents reason, plan, use tools, and stay aligned with your intent — the ReAct loop, agentic RAG, and multi-agent orchestration.',
+    'How autonomous AI agents reason, plan, use tools, and stay aligned with your intent: the ReAct loop, agentic RAG, and multi-agent orchestration.',
   llm:
-    'Large language models — how they think, why they fail, what RAG fixes, and how to evaluate them. The fundamentals every engineer building on top of an LLM should internalise.',
+    'Large language models: how they think, why they fail, what RAG fixes, and how to evaluate them. The fundamentals every engineer building on top of an LLM should internalise.',
   'machine-learning':
     'Machine learning from the perspective of someone shipping code, not writing papers. Algorithms, training, evaluation, and the practical trade-offs that decide which model you actually use.',
   beginners:
-    'Posts written for people who are new to a topic — minimal jargon, real examples, and the context that more advanced material assumes you already have.',
+    'Posts written for people who are new to a topic: minimal jargon, real examples, and the context that more advanced material assumes you already have.',
   backend:
-    'Server-side engineering — databases, APIs, queues, caching, performance, reliability. The unglamorous bits between the keyboard and a system that scales.',
+    'Server-side engineering: databases, APIs, queues, caching, performance, reliability. The unglamorous bits between the keyboard and a system that scales.',
   scalability:
-    'Strategies for making systems handle more load — vertical and horizontal scaling, replication, sharding, caching, load balancing, consistent hashing. The mechanics of growth.',
+    'Strategies for making systems handle more load: vertical and horizontal scaling, replication, sharding, caching, load balancing, consistent hashing. The mechanics of growth.',
   architecture:
-    'High-level system architecture — monolith versus microservices, REST versus WebSockets versus SSE, choosing the right database, and shaping software around how it actually has to evolve.',
+    'High-level system architecture: monolith versus microservices, REST versus WebSockets versus SSE, choosing the right database, and shaping software around how it actually has to evolve.',
   oop:
     'Object-oriented programming as a working tool: inheritance, composition, polymorphism, encapsulation, and where each one helps or gets in the way.',
   'software-engineering':
-    'The craft of building software well — design, testing, refactoring, performance, security, tooling, and the trade-offs that aren\u2019t in the Stack Overflow answer.',
+    'The craft of building software well: design, testing, refactoring, performance, security, tooling, and the trade-offs that aren\u2019t in the Stack Overflow answer.',
   security:
-    'Practical software security for engineers — secrets handling, threat modelling, least privilege, prompt injection, sandboxing, and AI-specific attack surfaces.',
+    'Practical software security for engineers: secrets handling, threat modelling, least privilege, prompt injection, sandboxing, and AI-specific attack surfaces.',
 };
 
 const DEFAULT_TAG_DESCRIPTION = (tag: string) =>
-  `Posts tagged #${tag} from LearnwithManoj — practical engineering tutorials and walkthroughs alongside the YouTube channel.`;
+  `Posts tagged #${tag} from LearnwithManoj: practical engineering tutorials and walkthroughs alongside the YouTube channel.`;
 
 /**
  * Longer, multi-paragraph body lede shown on `/tags/[tag]`. Kept separate from
@@ -175,9 +175,9 @@ const DEFAULT_TAG_DESCRIPTION = (tag: string) =>
  */
 const TAG_BODIES: Record<string, string> = {
   'ai-agents':
-    "How autonomous AI agents reason, plan, use tools, remember context, and stay aligned with your intent. The posts collected here cover the ReAct loop and tool use, agentic RAG, multi-agent orchestration, short-term and long-term memory, semantic caching, and human-in-the-loop patterns for catching mistakes before they ship.\n\nThe series is opinionated about what makes an agent useful versus what makes it dangerous: which capabilities to grant, which to gate behind explicit approval, and which to refuse outright. Every post pairs the mental model with the trade-offs that come up the moment you try to put an agent in front of real users — latency, cost, evaluation, and the failure modes that emerge only at scale. Read them in order if you're new to agents, or skip to the topic you need to ship next.",
+    "How autonomous AI agents reason, plan, use tools, remember context, and stay aligned with your intent. The posts collected here cover the ReAct loop and tool use, agentic RAG, multi-agent orchestration, short-term and long-term memory, semantic caching, and human-in-the-loop patterns for catching mistakes before they ship.\n\nThe series is opinionated about what makes an agent useful versus what makes it dangerous: which capabilities to grant, which to gate behind explicit approval, and which to refuse outright. Every post pairs the mental model with the trade-offs that come up the moment you try to put an agent in front of real users: latency, cost, evaluation, and the failure modes that emerge only at scale. Read them in order if you're new to agents, or skip to the topic you need to ship next.",
   security:
-    "Practical software security from an engineer's perspective — secrets handling, threat modelling, least privilege, input validation, prompt injection, sandboxing, and the AI-specific attack surfaces that change the threat model. Each post focuses on how to think about risk before it bites in production: which mitigations actually move the needle, which ones are theatre, and how to design systems so a single bug doesn't become a single point of catastrophic failure.\n\nThe coverage spans the boring-but-essential (rotating credentials, locking down server access, sanitising user input) and the AI-era unknowns (prompt-injected agents, untrusted tool outputs, exfiltrating data through innocent-looking model responses). Written for engineers shipping code, not security consultants writing reports — every recommendation is something you can apply in your next pull request.",
+    "Practical software security from an engineer's perspective: secrets handling, threat modelling, least privilege, input validation, prompt injection, sandboxing, and the AI-specific attack surfaces that change the threat model. Each post focuses on how to think about risk before it bites in production: which mitigations actually move the needle, which ones are theatre, and how to design systems so a single bug doesn't become a single point of catastrophic failure.\n\nThe coverage spans the boring-but-essential (rotating credentials, locking down server access, sanitising user input) and the AI-era unknowns (prompt-injected agents, untrusted tool outputs, exfiltrating data through innocent-looking model responses). Written for engineers shipping code, not security consultants writing reports. Every recommendation is something you can apply in your next pull request.",
 };
 
 /** Short meta description for a tag — safe to paste into `<meta name="description">`. */

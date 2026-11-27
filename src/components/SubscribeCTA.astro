@@ -15,8 +15,8 @@ const {
   variant = 'default',
   heading = `Subscribe to ${SITE_TITLE} on YouTube`,
   body = variant === 'inline'
-    ? `Like this format? Hundreds more walkthroughs like this one live on the channel — new videos drop weekly.`
-    : `Practical engineering walkthroughs, system design deep-dives, and code-first tutorials — new videos drop weekly. Subscribe so you never miss one.`,
+    ? `Like this format? More walkthroughs like this one live on the channel, with new videos every week.`
+    : `Practical engineering walkthroughs, system design deep-dives, and code-first tutorials, with new videos every week. Subscribe so you never miss one.`,
   ctaLabel = variant === 'inline' ? 'Watch the channel' : 'Subscribe on YouTube',
 } = Astro.props;
 ---
@@ -36,7 +36,7 @@ const {
     href={YT_SUBSCRIBE_URL}
     target="_blank"
     rel="noopener"
-    class="inline-flex shrink-0 items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700"
+    class="inline-flex shrink-0 items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700 active:translate-y-px"
     aria-label={`Subscribe to ${YT_HANDLE} on YouTube`}
   >
     <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">

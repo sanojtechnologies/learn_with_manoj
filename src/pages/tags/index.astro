@@ -39,7 +39,7 @@ const jsonLd = [
       Browse {tags.length} topics across {posts.length} engineering posts. Start with one of the
       four pillars below for a curated tour through the major subject areas, or scroll to the
       topic cloud beneath for sub-topics, series tags, and supporting subjects. Every tag links
-      to a page with every post on that subject — plus a list of related topics so you can
+      to a page with every post on that subject, plus a list of related topics so you can
       hop between adjacent areas without going back to the index.
     </p>
   </header>
@@ -49,8 +49,8 @@ const jsonLd = [
       <h2 id="pillars-heading" class="sr-only">Topic pillars</h2>
       <div class="grid gap-4 sm:grid-cols-2">
         {pillarCards.map((t) => (
-          <article class="group relative rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-500">
-            <h3 class="text-base font-semibold text-slate-900 group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-400">
+          <article class="group relative rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-colors hover:border-brand-400 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-500">
+            <h3 class="text-base font-semibold text-slate-900 dark:text-white">
               <a href={`/tags/${t.slug}`} class="after:absolute after:inset-0">
                 #{t.tag}
                 <span class="ml-2 text-xs font-normal text-slate-500 dark:text-slate-400">{t.count} {t.count === 1 ? 'post' : 'posts'}</span>
@@ -88,6 +88,6 @@ const jsonLd = [
   )}
 
   {tags.length === 0 && (
-    <p class="text-slate-600 dark:text-slate-400">No topics yet — publish a tagged post to see it here.</p>
+    <p class="text-slate-600 dark:text-slate-400">No topics yet. Publish a tagged post to see it here.</p>
   )}
 </BaseLayout>

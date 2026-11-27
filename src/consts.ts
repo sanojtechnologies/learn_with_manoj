@@ -13,7 +13,7 @@ export const SITE_TAGLINE = 'Never stop Learning.';
  * SERP card reinforces them twice in the same snippet.
  */
 export const SITE_DESCRIPTION =
-  'System design, design patterns and AI for engineers — written deep-dives and companion videos from the LearnwithManoj YouTube channel.';
+  'System design, design patterns and AI for engineers: written deep-dives and companion videos from the LearnwithManoj YouTube channel.';
 export const SITE_LANG = 'en';
 export const SITE_LOCALE = 'en_US';
 
