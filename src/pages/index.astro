@@ -65,6 +65,8 @@ const topics = [
   { href: '/tags/ai', label: 'AI for engineers', text: seriesCopy.ai.intro[0], start: startPost('ai-explained-finally-understand-how-ai-works-no-code') },
   { href: '/tags/software-engineering', label: 'Software engineering essentials', text: seriesCopy['design-patterns'].intro[1], start: undefined },
 ];
+// Episodes shown before "Show all"; keeps the three series columns level.
+const SHOWN = 8;
 const series = SERIES.map((def) => ({
   def,
   episodes: seriesEpisodes(def, posts, videoTitles),
@@ -199,7 +201,7 @@ const thumbFallback = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jp
                 </div>
                 <div>
                   <ol class="syllabus">
-                    {numbered.map((e) => (
+                    {numbered.slice(0, SHOWN).map((e) => (
                       <li class:list={{ 'is-start': e.isStart }}>
                         <span class="num">{e.number}</span>
                         <a href={postUrl(e.post)}>{e.post.data.title}</a>
@@ -207,19 +209,35 @@ const thumbFallback = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jp
                       </li>
                     ))}
                   </ol>
-                  {extra.length > 0 && (
-                    <>
-                      <p class="meta syllabus-extra">Also in this series</p>
-                      <ul class="syllabus">
-                        {extra.map((e) => (
-                          <li class:list={{ 'is-start': e.isStart }}>
-                            <span class="num"></span>
-                            <a href={postUrl(e.post)}>{e.post.data.title}</a>
-                            {e.isStart && <span class="start">Start here</span>}
-                          </li>
-                        ))}
-                      </ul>
-                    </>
+                  {(numbered.length > SHOWN || extra.length > 0) && (
+                    <details class="syllabus-more">
+                      <summary>Show all {s.episodes.length}</summary>
+                      {numbered.length > SHOWN && (
+                        <ol class="syllabus">
+                          {numbered.slice(SHOWN).map((e) => (
+                            <li class:list={{ 'is-start': e.isStart }}>
+                              <span class="num">{e.number}</span>
+                              <a href={postUrl(e.post)}>{e.post.data.title}</a>
+                              {e.isStart && <span class="start">Start here</span>}
+                            </li>
+                          ))}
+                        </ol>
+                      )}
+                      {extra.length > 0 && (
+                        <>
+                          <p class="meta syllabus-extra">Also in this series</p>
+                          <ul class="syllabus">
+                            {extra.map((e) => (
+                              <li class:list={{ 'is-start': e.isStart }}>
+                                <span class="num"></span>
+                                <a href={postUrl(e.post)}>{e.post.data.title}</a>
+                                {e.isStart && <span class="start">Start here</span>}
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
+                    </details>
                   )}
                 </div>
               </div>
