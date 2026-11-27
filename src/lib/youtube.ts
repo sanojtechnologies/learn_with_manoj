@@ -131,17 +131,24 @@ async function fetchFromInnertube(channelId: string): Promise<YouTubeVideo[]> {
  * Convert one Innertube playlist item into our flat `YouTubeVideo`. Returns
  * null if mandatory fields are missing so we don't pollute the page with
  * broken cards.
+ *
+ * Handles both item shapes YouTube has served for playlists:
+ *  - legacy `PlaylistVideo`: `id`, `title.text`, `thumbnails[]`, `author.name`
+ *  - `LockupView` (current, youtubei.js 18+): `content_id`,
+ *    `metadata.title.text`, `content_image.image[]`; no author.
  */
 function innertubeItemToVideo(raw: unknown): YouTubeVideo | null {
   if (!raw || typeof raw !== 'object') return null;
   const item = raw as Record<string, any>;
-  const id: string | undefined = item.id ?? item.video_id;
+  if (item.content_type && item.content_type !== 'VIDEO') return null;
+  const id: string | undefined = item.id ?? item.video_id ?? item.content_id;
   if (!id) return null;
 
-  const title: string = item.title?.text ?? '';
+  const title: string = item.title?.text ?? item.metadata?.title?.text ?? '';
   if (!title) return null;
 
-  const thumbnails: Array<{ url?: string }> = item.thumbnails ?? [];
+  const thumbnails: Array<{ url?: string }> =
+    item.thumbnails ?? item.content_image?.image ?? [];
   // Use the largest available; fall back to the deterministic ytimg URL.
   const thumbnail =
     thumbnails.reduce<string | undefined>((best, t) => best ?? t?.url, undefined) ??
