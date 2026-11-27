@@ -14,7 +14,7 @@ const posts = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/posts' }),
   schema: ({ image }) =>
     z.object({
-      title: z.string().min(10).max(80),
+      title: z.string().min(10).max(100),
       /**
        * Optional shorter title used only for the `<title>` tag, social cards
        * and structured data. Falls back to `title` when omitted. Use this when

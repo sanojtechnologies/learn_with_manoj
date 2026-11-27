@@ -15,7 +15,7 @@ import { join } from 'node:path';
 
 const TSV = 'scripts/channel-videos.tsv';
 const POSTS_DIR = 'src/content/posts';
-const TITLE_MAX = 80;
+const TITLE_MAX = 100; // YouTube's own title limit, so imported titles are never cut
 const DESC_MIN = 50;
 const DESC_MAX = 170;
 
