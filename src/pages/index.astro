@@ -28,11 +28,28 @@ const latestEpisode = latest && latestSeries
   ? seriesEpisodes(latestSeries, posts, videoTitles).find((e) => e.post.id === latest.id)
   : undefined;
 
+// Episode counts in the copy come from the posts, so they never drift.
+const ONES = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+const TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+const spell = (n: number): string => {
+  if (n >= 100) return String(n);
+  const word = n < 20 ? ONES[n] : `${TENS[Math.floor(n / 10)]}${n % 10 ? `-${ONES[n % 10]}` : ''}`;
+  return word.charAt(0).toUpperCase() + word.slice(1);
+};
+const countOf = (slug: string) => {
+  const def = SERIES.find((s) => s.slug === slug);
+  return def ? posts.filter((p) => p.data.tags.some((t) => def.tags.includes(t))).length : 0;
+};
+const episodesOf = (slug: string) => {
+  const n = countOf(slug);
+  return `${spell(n)} ${n === 1 ? 'episode' : 'episodes'}`;
+};
+
 // Each series as a numbered syllabus. The per-series copy is the homepage's own.
 const seriesCopy: Record<string, { intro: string[]; links: Array<{ href: string; label: string }> }> = {
   'system-design': {
     intro: [
-      'Scalability, load balancing, caching, sharding, CAP theorem, monolith versus microservices: the architectural decisions that decide whether your app survives its first growth spurt. Sixteen episodes and counting, taught from interview-ready first principles.',
+      `Scalability, load balancing, caching, sharding, CAP theorem, monolith versus microservices: the architectural decisions that decide whether your app survives its first growth spurt. ${episodesOf('system-design')} and counting, taught from interview-ready first principles.`,
     ],
     links: [{ href: '/tags/system-design', label: 'All System Design posts' }],
   },
@@ -48,7 +65,7 @@ const seriesCopy: Record<string, { intro: string[]; links: Array<{ href: string;
   },
   ai: {
     intro: [
-      'How large language models actually work (tokenization, embeddings, retrieval-augmented generation, fine-tuning, agents, multi-agent systems), explained for people who write production code, not people who read papers. Thirty-plus episodes between the AI Masterclass and AI Explained series.',
+      `How large language models actually work (tokenization, embeddings, retrieval-augmented generation, fine-tuning, agents, multi-agent systems), explained for people who write production code, not people who read papers. ${episodesOf('ai')} between the AI Masterclass and AI Explained series.`,
     ],
     links: [
       { href: '/tags/ai', label: 'AI for engineers' },
