@@ -17,7 +17,7 @@ export interface SeriesDef {
 
 export const SERIES: readonly SeriesDef[] = [
   { slug: 'system-design', label: 'System Design', tags: ['system-design'], start: 'what-is-system-design-beginners-roadmap' },
-  { slug: 'design-patterns', label: 'Design Patterns', tags: ['design-patterns'], start: 'composite-pattern-files-folders-trees' },
+  { slug: 'design-patterns', label: 'Design Patterns', tags: ['design-patterns'], start: 'factory-method-pattern-vs-simple-factory-pattern-finally-explained' },
   { slug: 'ai', label: 'AI', tags: ['ai-masterclass', 'ai-explained'], start: 'ai-explained-finally-understand-how-ai-works-no-code' },
 ];
 

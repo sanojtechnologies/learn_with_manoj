@@ -115,7 +115,7 @@ Frontmatter constraints (see [`src/content.config.ts`](src/content.config.ts)):
 │   ├── consts.ts               Site URL, channel ID, nav, social
 │   ├── content.config.ts       Posts collection Zod schema
 │   ├── content/posts/*.mdx     Blog posts
-│   ├── components/             BaseHead, Header, Footer, PostCard, VideoCard, YouTubeEmbed, SubscribeCTA, JsonLd
+│   ├── components/             BaseHead, Header, Footer, PostRow, VideoCard, YouTubeEmbed, SubscribeCTA, JsonLd
 │   ├── layouts/                BaseLayout, PostLayout
 │   ├── lib/
 │   │   ├── posts.ts            Pure helpers: published filter, tag math, related posts, reading time

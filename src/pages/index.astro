@@ -61,7 +61,7 @@ const seriesCopy: Record<string, { intro: string[]; links: Array<{ href: string;
 const startPost = (slug: string) => posts.find((p) => p.id === slug);
 const topics = [
   { href: '/tags/system-design', label: 'System Design', text: seriesCopy['system-design'].intro[0], start: startPost('what-is-system-design-beginners-roadmap') },
-  { href: '/tags/design-patterns', label: 'Design Patterns', text: seriesCopy['design-patterns'].intro[0], start: startPost('composite-pattern-files-folders-trees') },
+  { href: '/tags/design-patterns', label: 'Design Patterns', text: seriesCopy['design-patterns'].intro[0], start: startPost('factory-method-pattern-vs-simple-factory-pattern-finally-explained') },
   { href: '/tags/ai', label: 'AI for engineers', text: seriesCopy.ai.intro[0], start: startPost('ai-explained-finally-understand-how-ai-works-no-code') },
   { href: '/tags/software-engineering', label: 'Software engineering essentials', text: seriesCopy['design-patterns'].intro[1], start: undefined },
 ];
