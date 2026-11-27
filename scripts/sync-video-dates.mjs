@@ -1,7 +1,8 @@
-// Record every channel upload's publish date in src/data/video-dates.json.
+// Record every channel upload's publish date in src/data/video-dates.json and
+// a short description in src/data/video-descriptions.json.
 //
-// The build reads dates from the RSS feed (latest ~15 uploads) and then from
-// this file. YouTube often refuses per-video lookups from cloud build servers,
+// The build reads dates and descriptions from the RSS feed (latest ~15
+// uploads) and then from these files. YouTube often refuses per-video lookups from cloud build servers,
 // so run this on your own machine and commit the result:
 //
 //   npm run videos:dates
@@ -15,14 +16,30 @@ import { dirname } from 'node:path';
 
 const CHANNEL_ID = 'UCIBH6NpFY2CMvORLjPix6oQ'; // keep in sync with YT_CHANNEL_ID in src/consts.ts
 const OUT = 'src/data/video-dates.json';
+const OUT_DESC = 'src/data/video-descriptions.json';
+const DESC_MAX = 300;
 const CONCURRENCY = 8;
 
-let existing = {};
-try {
-  existing = JSON.parse(readFileSync(OUT, 'utf8'));
-} catch {
-  // first run: no file yet
-}
+const readJson = (path) => {
+  try {
+    return JSON.parse(readFileSync(path, 'utf8'));
+  } catch {
+    return {}; // first run: no file yet
+  }
+};
+const existing = readJson(OUT);
+const existingDesc = readJson(OUT_DESC);
+
+// The opening of a description, cut at a sentence end where one falls near the cap.
+const shorten = (text) => {
+  // Keep the prose; drop the chapter list and anything after the first timestamp.
+  const prose = String(text ?? '').split(/\s(?:\u23F1|Chapters?:|TIMESTAMPS|\(?\d{1,2}:\d{2}\b)/iu)[0];
+  const clean = prose.replace(/\s+/gu, ' ').trim();
+  if (clean.length <= DESC_MAX) return clean;
+  const cut = clean.slice(0, DESC_MAX);
+  const end = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('? '), cut.lastIndexOf('! '));
+  return end > DESC_MAX / 2 ? cut.slice(0, end + 1) : `${cut.slice(0, cut.lastIndexOf(' '))}\u2026`;
+};
 
 const yt = await Innertube.create({ retrieve_player: false });
 
@@ -42,8 +59,9 @@ while (playlist.has_continuation) {
   ingest(playlist);
 }
 
-const missing = ids.filter((id) => !existing[id]);
+const missing = ids.filter((id) => !existing[id] || !existingDesc[id]);
 const found = {};
+const foundDesc = {};
 const failed = [];
 const queue = [...missing];
 await Promise.all(
@@ -55,6 +73,8 @@ await Promise.all(
         const date = raw ? new Date(raw) : null;
         if (date && !Number.isNaN(date.getTime())) found[id] = date.toISOString();
         else failed.push(id);
+        const desc = shorten(info.basic_info?.short_description);
+        if (desc) foundDesc[id] = desc;
       } catch {
         failed.push(id);
       }
@@ -66,8 +86,11 @@ const merged = { ...existing, ...found };
 const sorted = Object.fromEntries(Object.entries(merged).sort(([, a], [, b]) => (a < b ? 1 : -1)));
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, `${JSON.stringify(sorted, null, 2)}\n`);
+const descs = { ...existingDesc, ...foundDesc };
+const sortedDesc = Object.fromEntries(Object.keys(sorted).filter((id) => descs[id]).map((id) => [id, descs[id]]));
+writeFileSync(OUT_DESC, `${JSON.stringify(sortedDesc, null, 2)}\n`);
 
 console.log(
-  `${ids.length} uploads · ${Object.keys(existing).length} already recorded · ${Object.keys(found).length} added · ${failed.length} failed`,
+  `${ids.length} uploads: ${Object.keys(sorted).length} dated, ${Object.keys(sortedDesc).length} described, ${failed.length} failed`,
 );
 if (failed.length) console.log(`no date for: ${failed.join(', ')}`);

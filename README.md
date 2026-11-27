@@ -193,12 +193,12 @@ You don't need a custom routing config — Vercel handles Astro's directory-styl
 4. Add the custom domain `learnwithmanoj.com` under **Custom domains** and follow the DNS instructions.
 5. Trigger the first deploy. (The `vercel.json` is ignored on Cloudflare — set equivalent headers via [`_headers`](https://developers.cloudflare.com/pages/configuration/headers/) if you want the same hardening.)
 
-### Video publish dates
+### Video dates and descriptions
 
-The uploads playlist carries no dates, and the RSS feed only covers the newest ~15 videos. Older uploads get their dates from [`src/data/video-dates.json`](src/data/video-dates.json), which you refresh on your own machine (YouTube often refuses these lookups from cloud build servers such as Vercel's):
+The uploads playlist carries no dates or descriptions, and the RSS feed only covers the newest ~15 videos. Older uploads get their dates from [`src/data/video-dates.json`](src/data/video-dates.json) and a short description (used in the `/videos` structured data) from [`src/data/video-descriptions.json`](src/data/video-descriptions.json). Both files are written by one script, which you refresh on your own machine (YouTube often refuses these lookups from cloud build servers such as Vercel's):
 
 ```bash
-npm run videos:dates   # adds any upload missing from the file; existing dates are kept
+npm run videos:dates   # adds any upload missing from the files; existing entries are kept
 ```
 
 New uploads appear in the RSS feed with a date, so run it occasionally to keep the file complete, then commit the result.

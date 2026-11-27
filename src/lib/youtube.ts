@@ -12,6 +12,7 @@
 import { XMLParser } from 'fast-xml-parser';
 import { Innertube } from 'youtubei.js';
 import recordedDates from '@/data/video-dates.json';
+import recordedDescriptions from '@/data/video-descriptions.json';
 
 export interface YouTubeVideo {
   id: string;
@@ -100,9 +101,12 @@ async function fillMissingDates(input: YouTubeVideo[]): Promise<YouTubeVideo[]> 
   // Dates recorded by `npm run videos:dates` come first: cloud build servers
   // are often refused the live lookups below.
   const recorded = recordedDates as Record<string, string>;
-  const videos = input.map((v) =>
-    v.publishedAt || !recorded[v.id] ? v : { ...v, publishedAt: new Date(recorded[v.id]) },
-  );
+  const described = recordedDescriptions as Record<string, string>;
+  const videos = input.map((v) => ({
+    ...v,
+    publishedAt: v.publishedAt ?? (recorded[v.id] ? new Date(recorded[v.id]) : undefined),
+    description: v.description || described[v.id] || '',
+  }));
   const missing = videos.filter((v) => !v.publishedAt);
   if (missing.length === 0) return videos;
   let yt: Innertube;
