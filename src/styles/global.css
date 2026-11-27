@@ -277,6 +277,8 @@ main .section:last-child { padding-bottom: 0; }
 .prose :where(a):not(:where([class~="not-prose"] *)) { text-underline-offset: 0.18em; overflow-wrap: anywhere; }
 /* Two weights in running text: 400 and 600. */
 .prose :where(a):not(:where([class~="not-prose"] *)) { font-weight: inherit; }
+strong, b { font-weight: 600; }
+.prose :where(strong, b, blockquote):not(:where([class~="not-prose"] *)) { font-weight: inherit; }
 .prose :where(strong, b):not(:where([class~="not-prose"] *)) { font-weight: 600; }
 .prose :where(code):not(:where([class~="not-prose"] *)) { border-radius: 3px; background: var(--color-paper-2); padding: 0.1em 0.3em; font-size: 0.9em; }
 .prose :where(code):not(:where([class~="not-prose"] *))::before,
