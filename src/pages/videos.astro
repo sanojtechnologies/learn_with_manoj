@@ -4,7 +4,7 @@ import VideoCard from '@/components/VideoCard.astro';
 import SubscribeCTA from '@/components/SubscribeCTA.astro';
 import { SITE_TITLE, YT_CHANNEL_ID, YT_CHANNEL_URL, YT_HANDLE } from '@/consts';
 import { fetchLatestVideos } from '@/lib/youtube';
-import { breadcrumbJsonLd } from '@/lib/seo';
+import { breadcrumbJsonLd, videoObjectJsonLd } from '@/lib/seo';
 
 const videos = await fetchLatestVideos(YT_CHANNEL_ID);
 const title = `Videos by ${YT_HANDLE}`;
@@ -14,6 +14,24 @@ const jsonLd = [
     { name: 'Home', url: '/' },
     { name: 'Videos', url: '/videos' },
   ]),
+  // Every dated upload as a VideoObject, in one @graph so the page carries a
+  // single block. Videos link out to YouTube, so this is a plain list, not an
+  // ItemList carousel (which needs on-site detail pages).
+  {
+    '@context': 'https://schema.org',
+    '@graph': videos
+      .filter((v) => v.publishedAt)
+      .map((v) => {
+        const { ['@context']: _ctx, ...obj } = videoObjectJsonLd({
+          videoId: v.id,
+          name: v.title,
+          description: v.description || v.title,
+          uploadDate: v.publishedAt!.toISOString(),
+          thumbnailUrl: v.thumbnail,
+        });
+        return obj;
+      }),
+  },
 ];
 ---
 <BaseLayout title={title} description={description} path="/videos" jsonLd={jsonLd}>
