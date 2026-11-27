@@ -30,7 +30,7 @@ const HeadingTag = `h${headingLevel}` as 'h2' | 'h3';
     </span>
   </a>
   <div class="flex flex-1 flex-col gap-2 p-4">
-    <HeadingTag class="text-base font-semibold leading-snug tracking-tight text-slate-900 dark:text-white">
+    <HeadingTag class="min-w-0 break-words text-base font-semibold leading-snug tracking-tight text-slate-900 dark:text-white">
       <a href={video.url} target="_blank" rel="noopener" class="after:absolute after:inset-0">
         {video.title}
       </a>
