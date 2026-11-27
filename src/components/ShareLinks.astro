@@ -38,11 +38,11 @@ const targets = [
   },
 ];
 ---
-<aside class="mt-10 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 not-prose dark:border-slate-800 dark:bg-slate-900/40" aria-labelledby="share-heading">
-  <p id="share-heading" class="text-sm font-medium text-slate-600 dark:text-slate-300">
+<aside class="share not-prose" aria-labelledby="share-heading">
+  <p id="share-heading" class="meta">
     Found this useful? Share it
   </p>
-  <ul class="mt-3 flex flex-wrap gap-2">
+  <ul>
     {targets.map((target) => (
       <li>
         <a
@@ -50,7 +50,6 @@ const targets = [
           target="_blank"
           rel="noopener nofollow"
           aria-label={`Share "${title}" on ${target.name}`}
-          class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:border-brand-400 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-brand-500 dark:hover:text-brand-400"
         >
           <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
             <path d={target.iconPath} />
@@ -63,7 +62,6 @@ const targets = [
       <a
         href={`mailto:?subject=${t}&body=${u}`}
         aria-label={`Share "${title}" by email`}
-        class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:border-brand-400 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-brand-500 dark:hover:text-brand-400"
       >
         <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
           <path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6Zm-2 0-8 5-8-5h16Zm0 12H4V8l8 5 8-5v10Z" />
@@ -72,7 +70,7 @@ const targets = [
       </a>
     </li>
   </ul>
-  <p class="mt-3 text-[11px] text-slate-500 dark:text-slate-400">
+  <p class="meta share-note">
     Share links open in a new tab. {SITE_TITLE} doesn&rsquo;t track share clicks; it only counts anonymous, cookie-free page views.
   </p>
 </aside>

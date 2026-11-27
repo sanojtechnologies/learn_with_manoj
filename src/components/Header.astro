@@ -1,51 +1,49 @@
 ---
 import { NAV_LINKS, SITE_TAGLINE, SITE_TITLE, YT_SUBSCRIBE_URL } from '@/consts';
+import { getPublishedPosts, postUrl } from '@/lib/posts';
 
 const pathname = Astro.url.pathname.replace(/\/$/u, '') || '/';
 const isActive = (href: string): boolean => {
   if (href === '/') return pathname === '/';
   return pathname === href || pathname.startsWith(`${href}/`);
 };
+
+// The banner names the newest post that has a video: the latest episode.
+const latest = (await getPublishedPosts()).find((p) => p.data.youtubeId);
+// On the homepage the hero already leads with this episode.
+const showBanner = latest && pathname !== '/' && pathname !== postUrl(latest);
 ---
-<header class="sticky top-0 z-40 border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
-  <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-    <a href="/" class="flex items-center gap-2.5 tracking-tight" aria-label={`${SITE_TITLE}: ${SITE_TAGLINE}`}>
-      <span class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-brand-600 text-sm font-bold text-white">M</span>
-      <span class="flex flex-col leading-tight">
-        <span class="font-semibold">{SITE_TITLE}</span>
-        <span class="hidden text-xs text-slate-500 sm:inline dark:text-slate-400">
-          {SITE_TAGLINE}
-        </span>
+{showBanner && latest && (
+  <div class="site-banner">
+    <div class="container">
+      <span>New episode:</span>
+      <a href={postUrl(latest)}>{latest.data.title}</a>
+    </div>
+  </div>
+)}
+<header class="site-bar">
+  <div class="container">
+    <a href="/" class="wordmark" aria-label={`${SITE_TITLE}: ${SITE_TAGLINE}`}>
+      <span class="wordmark-tile" aria-hidden="true">M</span>
+      <span>
+        <span class="wordmark-name">{SITE_TITLE}</span>
+        <span class="wordmark-tag">{SITE_TAGLINE}</span>
       </span>
     </a>
 
-    <nav aria-label="Primary" class="-mx-1 flex flex-1 items-center gap-1 overflow-x-auto px-1 text-sm">
+    <nav aria-label="Primary" class="site-nav">
       {NAV_LINKS.map((link) => (
-        <a
-          href={link.href}
-          aria-current={isActive(link.href) ? 'page' : undefined}
-          class:list={[
-            'whitespace-nowrap rounded-md px-3 py-1.5 transition-colors',
-            isActive(link.href)
-              ? 'bg-slate-100 font-medium text-slate-900 dark:bg-slate-800 dark:text-white'
-              : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white',
-          ]}
-        >
+        <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
           {link.label}
         </a>
       ))}
     </nav>
 
-    <a
-      href={YT_SUBSCRIBE_URL}
-      target="_blank"
-      rel="noopener"
-      class="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700 active:translate-y-px"
-    >
+    <a href={YT_SUBSCRIBE_URL} target="_blank" rel="noopener" class="btn btn--signal">
       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
       </svg>
-      <span class="hidden sm:inline">Subscribe</span>
+      <span>Subscribe</span>
     </a>
   </div>
 </header>

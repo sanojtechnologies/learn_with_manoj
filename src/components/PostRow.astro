@@ -1,0 +1,25 @@
+---
+import type { Post } from '@/lib/posts';
+import { formatDate, postUrl, tagUrl } from '@/lib/posts';
+
+interface Props {
+  post: Post;
+  headingLevel?: 2 | 3;
+  /** Show up to three topic links on the right. */
+  showTags?: boolean;
+}
+
+const { post, headingLevel = 3, showTags = false } = Astro.props;
+const HeadingTag = `h${headingLevel}` as 'h2' | 'h3';
+const pub = post.data.pubDate;
+---
+<li class="row">
+  <time datetime={pub.toISOString()}>{formatDate(pub)}</time>
+  <div>
+    <HeadingTag class="row-title"><a href={postUrl(post)}>{post.data.title}</a></HeadingTag>
+    <p>{post.data.description}</p>
+  </div>
+  <div class="row-tags">
+    {showTags && post.data.tags.slice(0, 3).map((tag) => <a href={tagUrl(tag)} class="tag">#{tag}</a>)}
+  </div>
+</li>

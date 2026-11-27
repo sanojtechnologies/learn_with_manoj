@@ -3,14 +3,17 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import SubscribeCTA from '@/components/SubscribeCTA.astro';
 import ShareLinks from '@/components/ShareLinks.astro';
 import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
-import PostCard from '@/components/PostCard.astro';
+import PostRow from '@/components/PostRow.astro';
 import {
   blogPostingJsonLd,
   breadcrumbJsonLd,
   videoObjectJsonLd,
   absoluteUrl,
 } from '@/lib/seo';
-import { formatDate, readingTime, tagUrl, type Post } from '@/lib/posts';
+import { formatDate, getPublishedPosts, postUrl, readingTime, tagUrl, type Post } from '@/lib/posts';
+import { SERIES, seriesEpisodes } from '@/lib/series';
+import { fetchLatestVideos } from '@/lib/youtube';
+import { YT_CHANNEL_ID } from '@/consts';
 
 interface Props {
   post: Post;
@@ -25,6 +28,16 @@ const url = absoluteUrl(path);
 const heroPath = data.heroImage?.src ?? '/og-default.png';
 const heroAlt = data.heroAlt ?? data.title;
 const minutes = readingTime(body);
+
+// The post's series, as a syllabus beside the article with this episode marked.
+const seriesDef = SERIES.find((s) => data.tags.some((t) => s.tags.includes(t)));
+const episodes = seriesDef
+  ? seriesEpisodes(
+      seriesDef,
+      await getPublishedPosts(),
+      new Map((await fetchLatestVideos(YT_CHANNEL_ID)).map((v) => [v.id, v.title])),
+    )
+  : [];
 
 const jsonLd = [
   blogPostingJsonLd({
@@ -63,64 +76,84 @@ const jsonLd = [
   tags={data.tags}
   jsonLd={jsonLd}
 >
-  <article class="mx-auto max-w-3xl">
-    <nav aria-label="Breadcrumb" class="mb-6 text-xs text-slate-500 dark:text-slate-400">
-      <ol class="flex flex-wrap items-center gap-1">
-        <li><a href="/" class="hover:underline">LearnwithManoj</a></li>
-        <li aria-hidden="true">/</li>
-        <li><a href="/blog" class="hover:underline">All posts</a></li>
-        <li aria-hidden="true">/</li>
-        <li class="text-slate-700 dark:text-slate-300" aria-current="page">{data.title}</li>
-      </ol>
-    </nav>
+  <article>
+    <div class="container">
+      <nav aria-label="Breadcrumb" class="breadcrumb">
+        <ol>
+          <li><a href="/">LearnwithManoj</a></li>
+          <li><a href="/blog">All posts</a></li>
+          <li aria-current="page">{data.title}</li>
+        </ol>
+      </nav>
 
-    <header class="mb-8">
-      <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">{data.title}</h1>
-      <p class="mt-3 text-lg text-slate-600 dark:text-slate-300">{data.description}</p>
-      <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-slate-500 dark:text-slate-400">
-        <time datetime={data.pubDate.toISOString()}>{formatDate(data.pubDate)}</time>
-        {data.updatedDate && (
-          <>
-            <span>Updated <time datetime={data.updatedDate.toISOString()}>{formatDate(data.updatedDate)}</time></span>
-          </>
-        )}
-        <span>{minutes} min read</span>
-      </div>
-      {data.tags.length > 0 && (
-        <ul class="mt-4 flex flex-wrap gap-2">
-          {data.tags.map((tag) => (
-            <li>
-              <a href={tagUrl(tag)} class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
-                #{tag}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
-    </header>
-
-    {data.youtubeId && (
-      <>
-        <YouTubeEmbed id={data.youtubeId} title={data.title} />
-        <SubscribeCTA variant="inline" />
-      </>
-    )}
-
-    <div class="prose prose-slate max-w-none dark:prose-invert">
-      <slot />
-    </div>
-
-    <ShareLinks url={url} title={data.title} />
-
-    <SubscribeCTA />
-
-    {related.length > 0 && (
-      <section class="mt-12 border-t border-slate-200 pt-8 dark:border-slate-800">
-        <h2 class="text-xl font-semibold tracking-tight">Related posts</h2>
-        <div class="mt-4 grid gap-4 sm:grid-cols-2">
-          {related.map((rel) => <PostCard post={rel} headingLevel={3} />)}
+      <header class="article-head">
+        <div>
+          <h1>{data.title}</h1>
+          <p class="lead">{data.description}</p>
         </div>
-      </section>
-    )}
+        <div class="article-meta">
+          <time datetime={data.pubDate.toISOString()}>{formatDate(data.pubDate)}</time>
+          {data.updatedDate && (
+            <span>Updated <time datetime={data.updatedDate.toISOString()}>{formatDate(data.updatedDate)}</time></span>
+          )}
+          <span>{minutes} min read</span>
+          {data.tags.length > 0 && (
+            <ul>
+              {data.tags.map((tag) => (
+                <li><a href={tagUrl(tag)} class="tag">#{tag}</a></li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </header>
+
+      <div class="article-body">
+        <div>
+          {data.youtubeId && (
+            <>
+              <YouTubeEmbed id={data.youtubeId} title={data.title} />
+              <SubscribeCTA variant="inline" />
+            </>
+          )}
+
+          <div class="prose max-w-none">
+            <slot />
+          </div>
+
+          <ShareLinks url={url} title={data.title} />
+        </div>
+
+        {seriesDef && episodes.length > 1 && (
+          <aside class="series-aside" aria-labelledby="series-aside-heading">
+            <h2 id="series-aside-heading">{seriesDef.label}</h2>
+            <ol class="syllabus syllabus--compact">
+              {episodes.map((e) => (
+                <li class:list={{ 'is-current': e.post.id === id }}>
+                  <span class="num">{e.number ?? ''}</span>
+                  {e.post.id === id
+                    ? <span aria-current="page">{e.post.data.title}</span>
+                    : <a href={postUrl(e.post)}>{e.post.data.title}</a>}
+                </li>
+              ))}
+            </ol>
+          </aside>
+        )}
+      </div>
+    </div>
   </article>
+
+  <SubscribeCTA />
+
+  {related.length > 0 && (
+    <section class="section" aria-labelledby="related-heading">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="related-heading">Related posts</h2>
+        </div>
+        <ol class="rows">
+          {related.map((rel) => <PostRow post={rel} />)}
+        </ol>
+      </div>
+    </section>
+  )}
 </BaseLayout>

@@ -21,8 +21,11 @@ const jsonLd = [
 ];
 ---
 <BaseLayout title={title} description={description} path="/about" jsonLd={jsonLd}>
-  <article class="prose prose-slate mx-auto max-w-3xl dark:prose-invert">
-    <h1>About {SITE_TITLE}</h1>
+  <article class="container">
+    <header class="page-head">
+      <h1>About {SITE_TITLE}</h1>
+    </header>
+    <div class="prose about-prose">
     <p>
       {SITE_TITLE} is the written companion to the
       <a href={YT_CHANNEL_URL} target="_blank" rel="noopener">{YT_HANDLE}</a>
@@ -101,6 +104,7 @@ const jsonLd = [
       YouTube feed and full channel inventory rebuild automatically every few
       hours so newly uploaded videos surface without a code push.
     </p>
+  </div>
   </article>
   <SubscribeCTA />
 </BaseLayout>

@@ -19,14 +19,13 @@ const thumbSrc = thumbnail ?? `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 const embedSrc = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
 ---
 <div
-  class="not-prose group relative my-6 aspect-video w-full overflow-hidden rounded-xl border border-slate-200 bg-black dark:border-slate-800"
+  class="player not-prose"
   data-yt-embed
   data-yt-src={embedSrc}
   data-yt-title={title}
 >
   <button
     type="button"
-    class="absolute inset-0 flex h-full w-full cursor-pointer items-center justify-center focus-visible:outline-offset-[-3px]"
     aria-label={`Play video: ${title}`}
   >
     <img
@@ -36,9 +35,8 @@ const embedSrc = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`
       decoding="async"
       width="1280"
       height="720"
-      class="absolute inset-0 h-full w-full object-cover"
     />
-    <span class="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-red-600 text-white shadow-lg transition-colors group-hover:bg-red-700">
+    <span class="player-play">
       <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8 5v14l11-7z" />
       </svg>
