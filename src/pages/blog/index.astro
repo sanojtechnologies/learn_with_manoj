@@ -8,7 +8,7 @@ import { breadcrumbJsonLd } from '@/lib/seo';
 const posts = await getPublishedPosts();
 const tags = summarizeTags(posts).slice(0, 12);
 const title = 'Engineering blog';
-const description = `All written deep-dives from ${SITE_TITLE} — system design, code-first tutorials, and engineering walkthroughs.`;
+const description = `All written deep-dives from ${SITE_TITLE}: system design, code-first tutorials, and engineering walkthroughs.`;
 const jsonLd = [
   breadcrumbJsonLd([
     { name: 'Home', url: '/' },

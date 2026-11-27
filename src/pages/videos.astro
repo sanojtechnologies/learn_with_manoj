@@ -8,7 +8,7 @@ import { breadcrumbJsonLd } from '@/lib/seo';
 
 const videos = await fetchLatestVideos(YT_CHANNEL_ID);
 const title = `Videos by ${YT_HANDLE}`;
-const description = `Every engineering video from the ${SITE_TITLE} YouTube channel — auto-synced from the channel uploads.`;
+const description = `Every engineering video from the ${SITE_TITLE} YouTube channel, auto-synced from the channel uploads.`;
 const jsonLd = [
   breadcrumbJsonLd([
     { name: 'Home', url: '/' },
