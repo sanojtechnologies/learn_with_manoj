@@ -19,9 +19,8 @@ export interface YouTubeVideo {
   url: string;
   thumbnail: string;
   /**
-   * Exact upload date. Optional because the Innertube playlist enumeration
-   * (which we rely on for the full ~100-video list) doesn't expose dates per
-   * item — we only know dates for the ~15 videos in the channel's RSS feed.
+   * Exact upload date: from the RSS feed for the latest ~15 videos, otherwise
+   * from each video's own page. Optional because a lookup can fail.
    */
   publishedAt?: Date;
   author: string;
@@ -69,7 +68,7 @@ export async function fetchLatestVideos(
         return fromRss;
       }
       const rssById = new Map(fromRss.map((v) => [v.id, v] as const));
-      return fromInnertube.map((v) => {
+      const merged = fromInnertube.map((v) => {
         const rss = rssById.get(v.id);
         if (!rss) return v;
         return {
@@ -81,9 +80,50 @@ export async function fetchLatestVideos(
           author: rss.author || v.author,
         };
       });
+      // The uploads playlist has no dates and RSS only covers the latest ~15,
+      // so look up the rest one by one from each video's own page.
+      return fillMissingDates(merged);
     })();
   }
   return videoCache;
+}
+
+const DATE_LOOKUP_CONCURRENCY = 8;
+
+/**
+ * Fill `publishedAt` for videos that lack it, from each video's microformat
+ * publish date. Best effort: a failed lookup leaves that video undated and
+ * never fails the build.
+ */
+async function fillMissingDates(videos: YouTubeVideo[]): Promise<YouTubeVideo[]> {
+  const missing = videos.filter((v) => !v.publishedAt);
+  if (missing.length === 0) return videos;
+  let yt: Innertube;
+  try {
+    yt = await Innertube.create({ retrieve_player: false });
+  } catch (error) {
+    console.warn('[youtube] date lookup unavailable:', (error as Error).message);
+    return videos;
+  }
+  const dates = new Map<string, Date>();
+  let failed = 0;
+  const queue = [...missing];
+  const worker = async () => {
+    for (let v = queue.shift(); v; v = queue.shift()) {
+      try {
+        const info: any = await yt.getBasicInfo(v.id);
+        const raw = info.basic_info?.publish_date ?? info.page?.[0]?.microformat?.publish_date;
+        const date = raw ? new Date(raw) : undefined;
+        if (date && !Number.isNaN(date.getTime())) dates.set(v.id, date);
+        else failed += 1;
+      } catch {
+        failed += 1;
+      }
+    }
+  };
+  await Promise.all(Array.from({ length: DATE_LOOKUP_CONCURRENCY }, worker));
+  if (failed > 0) console.warn(`[youtube] no publish date for ${failed} of ${missing.length} videos.`);
+  return videos.map((v) => (v.publishedAt || !dates.has(v.id) ? v : { ...v, publishedAt: dates.get(v.id) }));
 }
 
 /**
