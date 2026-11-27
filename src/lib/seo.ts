@@ -83,13 +83,13 @@ function titlePixelWidth(s: string): number {
 }
 
 const TITLE_PIXEL_BUDGET = 580;
-const TITLE_SUFFIX = ` — ${SITE_TITLE}`;
+const TITLE_SUFFIX = ` | ${SITE_TITLE}`;
 const TITLE_SUFFIX_PX = titlePixelWidth(TITLE_SUFFIX);
 
 export function resolveSeo(input: SeoInput): ResolvedSeo {
   const title = input.title.trim();
   // The brand suffix gets dropped on pages whose own title is already wide
-  // enough that ` — ${SITE_TITLE}` would push the whole thing past Google's
+  // enough that ` | ${SITE_TITLE}` would push the whole thing past Google's
   // ~580 px SERP cutoff. Keeping page-specific keywords visible matters more
   // than repeating the brand the user already saw in the URL bar.
   let fullTitle: string;

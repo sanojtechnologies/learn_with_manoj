@@ -39,7 +39,7 @@ const { tag, slug, posts, related } = Astro.props;
 const description = tagMeta(slug, tag);
 const bodyLede = tagBody(slug, tag);
 const bodyParagraphs = bodyLede.split('\n\n');
-const title = `#${tag} — posts and videos`;
+const title = `#${tag}: posts and videos`;
 const path = `/tags/${slug}`;
 const jsonLd = [
   breadcrumbJsonLd([
