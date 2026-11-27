@@ -203,7 +203,7 @@ function buildBody({ rawDescription, chapters, links, fittedTitle, lengthMin, le
 
   if (chapters.length > 0) {
     body += `## What's in the video${lengthLabel}\n\n`;
-    for (const c of chapters) body += `- **${c.time}** — ${c.label}\n`;
+    for (const c of chapters) body += `- **${c.time}** ${c.label}\n`;
     body += '\n';
   }
 
