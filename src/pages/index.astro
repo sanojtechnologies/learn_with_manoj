@@ -58,12 +58,11 @@ const seriesCopy: Record<string, { intro: string[]; links: Array<{ href: string;
   },
 };
 // The four topic areas, each with its door in: the homepage's own copy.
-const startPost = (slug: string) => posts.find((p) => p.id === slug);
 const topics = [
-  { href: '/tags/system-design', label: 'System Design', text: seriesCopy['system-design'].intro[0], start: startPost('what-is-system-design-beginners-roadmap') },
-  { href: '/tags/design-patterns', label: 'Design Patterns', text: seriesCopy['design-patterns'].intro[0], start: startPost('factory-method-pattern-vs-simple-factory-pattern-finally-explained') },
-  { href: '/tags/ai', label: 'AI for engineers', text: seriesCopy.ai.intro[0], start: startPost('ai-explained-finally-understand-how-ai-works-no-code') },
-  { href: '/tags/software-engineering', label: 'Software engineering essentials', text: seriesCopy['design-patterns'].intro[1], start: undefined },
+  { href: '/tags/system-design', label: 'System Design', text: seriesCopy['system-design'].intro[0] },
+  { href: '/tags/design-patterns', label: 'Design Patterns', text: seriesCopy['design-patterns'].intro[0] },
+  { href: '/tags/ai', label: 'AI for engineers', text: seriesCopy.ai.intro[0] },
+  { href: '/tags/software-engineering', label: 'Software engineering essentials', text: seriesCopy['design-patterns'].intro[1] },
 ];
 // Episodes shown before "Show all"; keeps the three series columns level.
 const SHOWN = 8;
@@ -137,7 +136,7 @@ const thumbFallback = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jp
   <section class="section" aria-labelledby="topics-heading">
     <div class="container">
       <div class="section-head">
-        <h2 id="topics-heading">What you&rsquo;ll find here</h2>
+        <h2 id="topics-heading">What the channel teaches</h2>
         <p>
           {SITE_TITLE} is the written companion to the {YT_HANDLE} YouTube channel.
           Every video has a post here with chapter timestamps, external references, and the trade-offs that didn&rsquo;t fit on screen, so you can skim, search, and link directly to the bits you need.
@@ -151,19 +150,10 @@ const thumbFallback = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jp
           <li>
             <h3><a href={t.href}>{t.label}</a></h3>
             <p>{t.text}</p>
-            {t.start && (
-              <p class="topic-start"><span>Start here</span> <a href={postUrl(t.start)} class="link">{t.start.data.title}</a></p>
-            )}
           </li>
         ))}
       </ul>
 
-      <p class="series-note">
-        New to the site? These three posts are the doors into the three biggest topic areas.
-        Read one and follow the related-posts trail at the bottom. Each post links to its
-        prerequisites and natural follow-ups, so you can build a path through the catalogue
-        without knowing the curriculum in advance.
-      </p>
 
       <div class="series" data-tabs>
         <div class="series-tabs" role="tablist" aria-label="Series">

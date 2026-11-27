@@ -10,6 +10,8 @@ interface Props {
 }
 
 const { post, headingLevel = 3, showTags = false } = Astro.props;
+// Descriptions mark code with backticks, as in Markdown.
+const parts = post.data.description.split(/`([^`]+)`/u);
 const HeadingTag = `h${headingLevel}` as 'h2' | 'h3';
 const pub = post.data.pubDate;
 ---
@@ -17,7 +19,7 @@ const pub = post.data.pubDate;
   <time datetime={pub.toISOString()}>{formatDate(pub)}</time>
   <div>
     <HeadingTag class="row-title"><a href={postUrl(post)}>{post.data.title}</a></HeadingTag>
-    <p>{post.data.description}</p>
+    <p>{parts.map((part, i) => (i % 2 ? <code>{part}</code> : part))}</p>
   </div>
   <div class="row-tags">
     {showTags && post.data.tags.slice(0, 3).map((tag) => <a href={tagUrl(tag)} class="tag">#{tag}</a>)}

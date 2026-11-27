@@ -29,6 +29,12 @@ const heroPath = data.heroImage?.src ?? '/og-default.png';
 const heroAlt = data.heroAlt ?? data.title;
 const minutes = readingTime(body);
 
+// Most posts open with their description; the header lede then only repeats it.
+const plain = (t: string) => t.replace(/[`*_\\[\]]/gu, '').replace(/\s+/gu, ' ').trim();
+const firstPara = (body ?? '').split(/\n\s*\n/u).map((p) => p.trim()).find((p) => p && !/^(import |export |<|#|!\[|---)/u.test(p)) ?? '';
+const showLede = !plain(firstPara).startsWith(plain(data.description).slice(0, 60));
+const ledeParts = data.description.split(/`([^`]+)`/u);
+
 // The post's series, as a syllabus beside the article with this episode marked.
 const seriesDef = SERIES.find((s) => data.tags.some((t) => s.tags.includes(t)));
 const episodes = seriesDef
@@ -89,7 +95,7 @@ const jsonLd = [
       <header class="article-head">
         <div>
           <h1>{data.title}</h1>
-          <p class="lead">{data.description}</p>
+          {showLede && <p class="lead">{ledeParts.map((part, i) => (i % 2 ? <code>{part}</code> : part))}</p>}
         </div>
         <div class="article-meta">
           <time datetime={data.pubDate.toISOString()}>{formatDate(data.pubDate)}</time>
@@ -142,7 +148,6 @@ const jsonLd = [
     </div>
   </article>
 
-  <SubscribeCTA />
 
   {related.length > 0 && (
     <section class="section" aria-labelledby="related-heading">
@@ -156,4 +161,5 @@ const jsonLd = [
       </div>
     </section>
   )}
+  <SubscribeCTA />
 </BaseLayout>

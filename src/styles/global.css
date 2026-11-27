@@ -1,12 +1,16 @@
 /* Hallmark · shape: Ecosystem Index (draw 1b6bdb, swapped from Stat-Led: no figures given) · genre: editorial · theme: brand · redesign: full
- * paper: oklch(98.2% 0.004 255) · accent: oklch(52% 0.19 257) · display: Source Serif 4 · body: system-ui · hero: Counter · nav: banner over a pinned bar · footer: letter close · signature: each series as a numbered syllabus
+ * paper: oklch(98.2% 0.004 255) · accent: oklch(52% 0.19 257) · display: Source Serif 4 · body: system-ui · hero: Counter on the homepage, Banner (a page head over its list or article) on every other page · nav: banner over a pinned bar · footer: letter close · signature: each series as a numbered syllabus
  * axes: light/roman-serif/cool · posture: Restrained · contrast: pass · fold: pass · v2.0.0 */
 /* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V3 · weakest: V, the first full build in this log; varied it by trading the card grids for an index, rows, a rail and a switcher */
-/* Hallmark · dismissed 34 · html and body get overflow-x: clip in base.css; the static HTML pass cannot see this linked stylesheet */
 /* Hallmark · dismissed 19 · "All rights reserved" is the footer copyright line, legal text the redesign does not reword */
 /* Hallmark · dismissed 26a · every control gets :focus-visible from base.css and the .btn rules here; the static HTML pass cannot see the linked stylesheet */
 /* Hallmark · dismissed 50 · .video-title sets overflow-wrap: break-word and min-width: 0 below; the static HTML pass cannot see it */
 /* Hallmark · dropped #start-here-heading · the three Start here cards became "Start here" markers inside each series syllabus on the homepage */
+/* Hallmark · waive 49b · the wrapping links are episode titles in the syllabus, rows and video cards, each its whole list item, never a nav, footer or tab label · the titles are the channel's real YouTube episode titles, kept word for word so they match the videos; a long title wraps like a heading rather than being cut */
+/* Hallmark · dismissed F25 · the words hidden on a phone are the other two series panels, which the tab strip above them opens; at 80rem the three panels simply sit side by side */
+/* Hallmark · dismissed 77 · the blog, videos, topics, tag, about and article pages are index and reading pages with a page head over one long list or article, not landing pages with six to nine sections */
+/* Hallmark · waive 79 · on the blog, videos, topics, tag, about and article pages the list, prose or player starts 40 to 80px under the page head, inside the head's own wrapper, so the check measures to the footer instead · each of those pages is a Banner: a short head with its first content above the fold, as the 1440 screenshots show */
+/* Hallmark · finish-review: subagent · 8 findings · 7 resolved, 1 kept (the footer's All rights reserved, legal text, dismissed 19) · gap: four System Design titles are cut mid-parenthesis in their front matter, the owner's to restore */
 /* Hallmark · answered F4 · the red Subscribe in the bar is the channel's signal colour, not a second primary; the hero has one filled button */
 @import "tailwindcss";
 @import "./tokens.css";
@@ -68,12 +72,19 @@
 .site-banner .container { display: flex; gap: var(--space-xs); align-items: baseline; min-height: 36px; padding-block: var(--space-xs); }
 .site-banner a { color: inherit; text-underline-offset: 0.2em; font-weight: 600; }
 .site-banner span { opacity: 0.8; white-space: nowrap; flex: none; }
-.site-banner a { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.site-banner a { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: var(--space-3xs) var(--space-2xs); }
+/* The bar is ink: the ring turns paper so it reads against it, drawn inside the clipped link. */
+.site-banner a:focus-visible { outline-color: var(--color-paper); outline-offset: -2px; }
+/* In dark mode ink is the light colour: keep the bar a dark step above the page instead of a white strip. */
+@media (prefers-color-scheme: dark) {
+  .site-banner { background: var(--color-paper-3); color: var(--color-ink); }
+  .site-banner a:focus-visible { outline-color: var(--color-focus); }
+}
 
 .site-bar { position: sticky; top: 0; z-index: var(--z-sticky-nav); background: var(--color-paper); border-bottom: var(--rule-hair) solid var(--color-rule); }
 .site-bar .container { display: flex; align-items: center; gap: var(--space-lg); min-height: 64px; }
 .wordmark { display: flex; align-items: center; gap: var(--space-sm); text-decoration: none; color: var(--color-ink); }
-.wordmark-tile { display: inline-flex; width: 32px; height: 32px; align-items: center; justify-content: center; border-radius: var(--radius-card); background: var(--color-accent); color: var(--color-accent-ink); font: 700 var(--text-sm)/1 var(--font-body); }
+.wordmark-tile { display: inline-flex; width: 32px; height: 32px; align-items: center; justify-content: center; border-radius: var(--radius-card); background: var(--color-accent); color: var(--color-accent-ink); font: 600 var(--text-sm)/1 var(--font-body); }
 .wordmark-name { font: 600 var(--text-lg)/1.1 var(--font-display); letter-spacing: -0.01em; }
 .wordmark-tag { display: block; font-size: var(--text-xs); color: var(--color-muted); }
 .site-nav { display: flex; gap: var(--space-2xs); flex: 1; overflow-x: auto; scrollbar-width: none; }
@@ -82,7 +93,11 @@
 .site-nav a[aria-current="page"] { color: var(--color-ink); box-shadow: inset 0 -2px 0 var(--color-accent); border-radius: 0; }
 @media (max-width: 40rem) { .site-bar .container { flex-wrap: wrap; gap: var(--space-xs) var(--space-md); padding-block: var(--space-xs); } .site-nav { order: 3; flex-basis: 100%; flex-wrap: wrap; overflow: visible; } .site-nav a { padding: var(--space-xs); } .wordmark-tag { display: none; } .site-bar .btn span { display: none; } .site-bar .btn { padding: 0 var(--space-sm); } }
 
-.site-foot { margin-top: var(--section-gap); border-top: var(--rule-hair) solid var(--color-rule); }
+/* The page owns the space above the footer: none after the close band, one section gap after a list. */
+main { padding-bottom: var(--section-gap-s); }
+main:has(> .close:last-child) { padding-bottom: 0; }
+main .section:last-child { padding-bottom: 0; }
+.site-foot { border-top: var(--rule-hair) solid var(--color-rule); }
 .site-foot .container { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--gap-columns); padding-block: var(--space-3xl) var(--space-2xl); }
 .site-foot-sign { font: 600 var(--text-section)/1.05 var(--font-display); letter-spacing: var(--tracking-display); }
 .site-foot-sign small { display: block; margin-top: var(--space-md); font: 400 var(--text-lg)/1.4 var(--font-display); font-style: italic; color: var(--color-muted); letter-spacing: 0; }
@@ -121,6 +136,13 @@
 .episode-title a { text-decoration: none; }
 .episode-title a:hover { color: var(--color-accent); }
 .episode-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+/* Wide: the thumbnail shares the first row with the head, so the two centre on each other; the caption hangs below it. */
+@media (min-width: 60.01rem) {
+  .hero .container { row-gap: 0; }
+  .hero .container > div { grid-row: 1; grid-column: 1; align-self: center; }
+  .episode { grid-row: 1 / span 4; grid-column: 2; grid-template-rows: subgrid; row-gap: var(--space-md); }
+  .episode-frame { align-self: center; }
+}
 @media (max-width: 60rem) { .hero { min-height: 0; padding-block: var(--space-xl) var(--space-2xl); } .hero .container { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); } }
 
 /* ---------- Series: switcher holding a syllabus ---------- */
@@ -150,7 +172,7 @@
 .rows { list-style: none; margin: 0; padding: 0; border-top: var(--rule-hair) solid var(--color-rule); }
 .row { position: relative; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 7fr) minmax(0, 3fr); gap: var(--space-md) var(--gap-columns); padding-block: var(--space-lg); border-bottom: var(--rule-hair) solid var(--color-rule); transition: background-color var(--dur-short) var(--ease-out); }
 .row:hover { background: var(--color-paper-2); }
-.row h3, .row .row-title { font: 600 var(--text-title)/1.2 var(--font-display); letter-spacing: -0.01em; }
+.row h3, .row .row-title { font: 600 var(--text-title)/1.3 var(--font-display); letter-spacing: -0.01em; }
 .row h3 a, .row .row-title a { text-decoration: none; }
 .row h3 a::after, .row .row-title a::after { content: ""; position: absolute; inset: 0; }
 .row p { margin-top: var(--space-xs); color: var(--color-ink-2); }
@@ -188,7 +210,7 @@
 /* ---------- Close: subscribe ---------- */
 .close { background: var(--color-paper-2); padding-block: var(--section-gap-s); }
 .close .container { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: var(--gap-columns); align-items: end; }
-.close h2 { max-width: 18ch; }
+.close h2 { max-width: 24ch; }
 .close p { margin-top: var(--space-lg); color: var(--color-ink-2); max-width: 52ch; }
 .close .btn { justify-self: end; }
 @media (max-width: 60rem) { .close .container { grid-template-columns: minmax(0, 1fr); } .close .btn { justify-self: start; } }
@@ -253,7 +275,10 @@
 .prose :where(h2, h3, h4):not(:where([class~="not-prose"] *)) { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.01em; }
 .prose :where(h2):not(:where([class~="not-prose"] *)) { font-size: var(--text-2xl); }
 .prose :where(a):not(:where([class~="not-prose"] *)) { text-underline-offset: 0.18em; overflow-wrap: anywhere; }
-.prose :where(code):not(:where([class~="not-prose"] *)) { border-radius: 3px; background: var(--color-paper-2); padding: 0.1em 0.3em; font-size: 0.9em; font-weight: 500; }
+/* Two weights in running text: 400 and 600. */
+.prose :where(a):not(:where([class~="not-prose"] *)) { font-weight: inherit; }
+.prose :where(strong, b):not(:where([class~="not-prose"] *)) { font-weight: 600; }
+.prose :where(code):not(:where([class~="not-prose"] *)) { border-radius: 3px; background: var(--color-paper-2); padding: 0.1em 0.3em; font-size: 0.9em; }
 .prose :where(code):not(:where([class~="not-prose"] *))::before,
 .prose :where(code):not(:where([class~="not-prose"] *))::after { content: none; }
 .prose :where(pre):not(:where([class~="not-prose"] *)) { border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); }
@@ -272,12 +297,14 @@
 .skip-link:focus-visible { top: var(--space-sm); }
 
 .series-links { display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-lg); margin-top: var(--space-lg); font-size: var(--text-sm); }
-.series-note { margin-block: var(--space-xl) var(--space-3xl); max-width: 70ch; font-size: var(--text-sm); color: var(--color-muted); }
+.topics + .series { margin-top: var(--space-3xl); }
 .play-mark { color: var(--color-signal); }
 
 .article-head .lead { margin-top: var(--space-lg); }
 .series-aside { position: sticky; top: 96px; align-self: start; max-height: calc(100dvh - 120px); overflow-y: auto; padding-top: var(--space-xl); }
 .series-aside h2 { font-size: var(--text-title); margin-bottom: var(--space-md); }
+.syllabus--page { margin-top: var(--space-xl); }
+.syllabus--page a { font: 600 var(--text-title)/1.3 var(--font-display); }
 .syllabus--compact li { grid-template-columns: 2rem minmax(0, 1fr); gap: var(--space-sm); padding-block: var(--space-sm); font-size: var(--text-sm); }
 .syllabus--compact .num { font-size: var(--text-md); }
 .syllabus--compact a { font-size: var(--text-sm); }
@@ -287,16 +314,16 @@
 .site-bar .btn { margin-left: auto; }
 .share-note { margin-top: var(--space-sm); }
 .index-filter--large { font-size: var(--text-lg); gap: var(--space-sm) var(--space-xl); }
-.tag-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-lg) var(--gap-columns); align-items: start; padding-top: var(--space-xl); }
-.tag-head p { color: var(--color-ink-2); }
+.tag-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-lg) var(--gap-columns); align-items: start; padding-top: var(--space-xl); }
+.tag-head p { color: var(--color-ink-2); max-width: 65ch; }
 .tag-head p + p { margin-top: var(--space-md); }
 @media (max-width: 60rem) { .tag-head { grid-template-columns: minmax(0, 1fr); } }
 .notfound { min-height: 60dvh; padding-top: var(--space-4xl); }
-.about-prose { max-width: 68ch; font-size: var(--text-lg); }
+.about-prose { max-width: 58ch; font-size: var(--text-lg); }
 @media (min-width: 80rem) { .video-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 /* Section heads sit a clear step below the hero head. */
-:root { --text-section: clamp(1.875rem, 1.4vw + 1.15rem, 2.75rem); }
+:root { --text-section: clamp(1.875rem, 1.6vw + 1.15rem, 2.75rem); }
 .section-head a { align-self: end; }
 
 /* The four topics, side by side, parted by hairlines. */
@@ -313,7 +340,7 @@
 .syllabus-extra { margin-top: var(--space-lg); margin-bottom: var(--space-xs); }
 
 /* Topics page: the lead at body size, the pillars two across. */
-.tags-lead { font-size: var(--text-md); max-width: 60ch; }
+.tags-lead { max-width: 60ch; }
 @media (min-width: 60rem) { .pillars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--gap-columns); } .pillars .row { grid-template-columns: minmax(0, 2fr) minmax(0, 8fr); } }
 .pillars .row > span:last-child { display: none; }
 
@@ -330,7 +357,10 @@
 @media (min-width: 80rem) {
   .js .series-tabs, .series-tabs { display: none; }
   .series { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2xl) var(--gap-columns); align-items: start; }
-  .series-panel, .js .series-panel:not(.is-active) { display: block; }
+  .series { row-gap: 0; }
+  /* Each panel shares two rows with its neighbours, so the three lists start on one line. */
+  .series-panel, .js .series-panel:not(.is-active) { display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: var(--space-lg); }
+  .series-panel .series-intro { display: contents; }
   .series-panel + .series-panel, .js .series-panel + .series-panel { margin-top: 0; }
   .series-intro { grid-template-columns: minmax(0, 1fr); gap: var(--space-lg); }
   .series-intro h3 { font-size: var(--text-2xl); }

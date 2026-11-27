@@ -12,6 +12,10 @@ import {
   type TagSummary,
 } from '@/lib/posts';
 import { breadcrumbJsonLd } from '@/lib/seo';
+import { postUrl } from '@/lib/posts';
+import { SERIES, seriesEpisodes } from '@/lib/series';
+import { fetchLatestVideos } from '@/lib/youtube';
+import { YT_CHANNEL_ID } from '@/consts';
 
 export async function getStaticPaths() {
   const posts = await getPublishedPosts();
@@ -36,6 +40,16 @@ interface Props {
 }
 
 const { tag, slug, posts, related } = Astro.props;
+
+// A series tag lists its posts as the series syllabus, in episode order.
+const seriesDef = SERIES.find((s) => s.tags.includes(slug));
+const episodes = seriesDef
+  ? seriesEpisodes(
+      { ...seriesDef, tags: [slug] },
+      posts,
+      new Map((await fetchLatestVideos(YT_CHANNEL_ID)).map((v) => [v.id, v.title])),
+    )
+  : [];
 const description = tagMeta(slug, tag);
 const bodyLede = tagBody(slug, tag);
 const bodyParagraphs = bodyLede.split('\n\n');
@@ -77,13 +91,25 @@ const jsonLd = [
       <h1>#{tag}</h1>
       <div>
         {bodyParagraphs.map((para) => <p>{para}</p>)}
-        <p class="meta">{posts.length} {posts.length === 1 ? 'post' : 'posts'} below, newest first.</p>
+        <p class="meta">{posts.length} {posts.length === 1 ? 'post' : 'posts'} below, {seriesDef ? 'in episode order' : 'newest first'}.</p>
       </div>
     </header>
 
-    <ol class="rows">
-      {posts.map((post) => <PostRow post={post} headingLevel={2} />)}
-    </ol>
+    {seriesDef ? (
+      <ol class="syllabus syllabus--page">
+        {episodes.map((e) => (
+          <li class:list={{ 'is-start': e.isStart }}>
+            <span class="num">{e.number}</span>
+            <a href={postUrl(e.post)}>{e.post.data.title}</a>
+            {e.isStart && <span class="start">Start here</span>}
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <ol class="rows">
+        {posts.map((post) => <PostRow post={post} headingLevel={2} />)}
+      </ol>
+    )}
 
     {related.length > 0 && (
       <section class="section" aria-labelledby="related-topics-heading">

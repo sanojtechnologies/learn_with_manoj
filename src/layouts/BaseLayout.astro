@@ -17,15 +17,21 @@ type Props = SeoInput & {
 const { jsonLd = [], skipDefaultJsonLd = false, ...seo } = Astro.props;
 const defaults = skipDefaultJsonLd ? [] : [websiteJsonLd(), personJsonLd()];
 const allJsonLd = [...defaults, ...jsonLd];
+
+// Dev only: Tailwind drops CSS comments, so the Hallmark audit (run against the
+// dev server, or a local build with HALLMARK_AUDIT=1) reads each page's hero
+// posture from here. Never in a normal build.
+const HALLMARK_STAMP = '/* Hallmark · hero: banner, counter (/) · posture: restrained · shape: Ecosystem Index · genre: editorial */';
 ---
 <!doctype html>
-<html lang={SITE_LANG}>
+<html lang={SITE_LANG} class="overflow-x-clip">
   <head>
     <script is:inline>document.documentElement.classList.add('js');</script>
     <BaseHead {...seo} />
     <JsonLd data={allJsonLd} />
+    {(import.meta.env.DEV || process.env.HALLMARK_AUDIT) && <style is:inline set:html={HALLMARK_STAMP} />}
   </head>
-  <body>
+  <body class="overflow-x-clip">
     <a href="#main" class="skip-link">Skip to content</a>
     <Header />
     <main id="main">

@@ -53,7 +53,7 @@ const jsonLd = [
       </p>
     ) : (
       <div class="video-grid">
-        {videos.map((video) => <VideoCard video={video} headingLevel={2} />)}
+        {videos.map((video, i) => <VideoCard video={video} headingLevel={2} eager={i < 4} />)}
       </div>
     )}
   </div>

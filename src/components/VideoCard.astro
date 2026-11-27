@@ -5,9 +5,11 @@ import { formatDate } from '@/lib/posts';
 interface Props {
   video: YouTubeVideo;
   headingLevel?: 2 | 3;
+  /** Load the thumbnail at once: for cards on the first screen. */
+  eager?: boolean;
 }
 
-const { video, headingLevel = 3 } = Astro.props;
+const { video, headingLevel = 3, eager = false } = Astro.props;
 const HeadingTag = `h${headingLevel}` as 'h2' | 'h3';
 ---
 <article class="video">
@@ -15,7 +17,8 @@ const HeadingTag = `h${headingLevel}` as 'h2' | 'h3';
     <img
       src={video.thumbnail}
       alt=""
-      loading="lazy"
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : undefined}
       decoding="async"
       width="480"
       height="360"
